@@ -54,8 +54,6 @@ const BASE_RADIUS_Y = 280;
 const CARD_W = 460;
 /** Estimated max card height — generous buffer so 6-row details (with multi-line wrapped boundary) never clip */
 const CARD_H_EST = 560;
-/** How far to push the card away from the node along the radial direction */
-const CARD_OFFSET = 240;
 
 function positionFor(i: number, n: number, scale: number) {
   if (n === 1) {
