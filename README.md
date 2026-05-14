@@ -4,7 +4,7 @@
 
 ## 在线观看
 
-部署在 GitHub Pages：<https://USERNAME.github.io/drs-video/>（替换为你的 GitHub username）
+部署在 GitHub Pages：<https://uu-yaya.github.io/drs-video/>（替换为你的 GitHub username）
 
 ## 操作
 
