@@ -1,0 +1,206 @@
+/* Bottom video-style control bar — class prefix .vc- */
+
+.video-controls {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 60;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 0 28px;
+  background: linear-gradient(
+    to bottom,
+    rgba(10, 18, 36, 0.0) 0%,
+    rgba(10, 18, 36, 0.7) 30%,
+    rgba(10, 18, 36, 0.92) 100%
+  );
+  color: var(--text);
+  font-family: var(--font-mono);
+  user-select: none;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 280ms ease;
+}
+
+/* Reveal on hover or focus (entire viewport hover triggers it, same as ProgressBar) */
+.app-shell:hover .video-controls,
+.video-controls:hover,
+.video-controls:focus-within {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* play/pause button */
+.vc-btn {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  background: transparent;
+  border: 2px solid var(--rule);
+  color: var(--text);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: border-color 200ms ease, color 200ms ease, background 200ms ease;
+}
+
+.vc-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: rgba(77, 210, 255, 0.1);
+}
+
+.vc-btn:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* progress track */
+.vc-track {
+  position: relative;
+  flex: 1;
+  height: 18px;
+  display: flex;
+  align-items: center;
+}
+
+.vc-track::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 4px;
+  margin-top: -2px;
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.vc-track-fill {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  height: 4px;
+  margin-top: -2px;
+  background: var(--accent);
+  box-shadow: 0 0 12px var(--accent-glow);
+  pointer-events: none;
+}
+
+.vc-track-input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  background: transparent;
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+  opacity: 0; /* visually use the styled track/fill; this is the hit target */
+}
+
+.vc-track-input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  background: var(--accent);
+  border-radius: 50%;
+  border: 2px solid var(--surface-3);
+  cursor: pointer;
+  box-shadow: 0 0 12px var(--accent-glow);
+}
+
+.vc-track-input::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  background: var(--accent);
+  border-radius: 50%;
+  border: 2px solid var(--surface-3);
+  cursor: pointer;
+  box-shadow: 0 0 12px var(--accent-glow);
+}
+
+/* Show the real thumb on hover */
+.vc-track:hover .vc-track-input,
+.video-controls:focus-within .vc-track-input {
+  opacity: 1;
+}
+
+/* time display */
+.vc-time {
+  flex-shrink: 0;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  color: var(--text-2);
+  min-width: 130px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.vc-time-current {
+  color: var(--text);
+}
+
+.vc-time-sep {
+  color: var(--text-faint);
+  margin: 0 4px;
+}
+
+/* rate group */
+.vc-rate {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-left: 16px;
+  border-left: 1px solid var(--rule);
+}
+
+.vc-rate-label {
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  color: var(--text-mute);
+}
+
+.vc-rate-input {
+  width: 120px;
+  height: 6px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: var(--surface-3);
+  border: 1px solid var(--rule);
+  outline: none;
+  cursor: pointer;
+}
+
+.vc-rate-input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 18px;
+  background: var(--accent);
+  border: 2px solid var(--surface-3);
+  cursor: pointer;
+  box-shadow: 0 0 10px var(--accent-glow);
+}
+
+.vc-rate-input::-moz-range-thumb {
+  width: 14px;
+  height: 18px;
+  background: var(--accent);
+  border: 2px solid var(--surface-3);
+  cursor: pointer;
+  box-shadow: 0 0 10px var(--accent-glow);
+}
+
+.vc-rate-value {
+  font-size: 14px;
+  color: var(--accent);
+  min-width: 50px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}

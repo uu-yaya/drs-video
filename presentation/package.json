@@ -9,7 +9,8 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "extract-narrations": "tsx scripts/extract-narrations.ts",
-    "synthesize-audio": "bash scripts/synthesize-audio.sh"
+    "synthesize-audio": "bash scripts/synthesize-audio.sh",
+    "measure-audio": "tsx scripts/measure-audio.ts"
   },
   "dependencies": {
     "react": "^19.2.6",
@@ -25,6 +26,7 @@
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.2",
     "globals": "^17.6.0",
+    "mp3-duration": "^1.1.0",
     "tsx": "^4.21.0",
     "typescript": "~6.0.2",
     "typescript-eslint": "^8.59.2",
