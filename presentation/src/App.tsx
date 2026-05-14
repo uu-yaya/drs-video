@@ -7,7 +7,7 @@ import { useCallback, useMemo, useState } from "react";
 import { ProgressBar } from "./components/ProgressBar";
 import { Stage } from "./components/Stage";
 import { Subtitle } from "./components/Subtitle";
-import { VideoControls } from "./components/VideoControls";
+import { VideoControls, type ChapterMarker } from "./components/VideoControls";
 import { useAudioPlayer } from "./hooks/useAudioPlayer";
 import { useStepper } from "./hooks/useStepper";
 import { CHAPTERS } from "./registry/chapters";
@@ -50,20 +50,23 @@ export default function App() {
   // Build a flat timeline mapping (globalIdx → step duration). audio-durations.json
   // ships from measure-audio.ts and falls back to the char-count estimate for any
   // missing entries (e.g. new chapter added but not yet resynthesized).
-  const { stepStarts, totalDuration } = useMemo(() => {
+  const { stepStarts, totalDuration, chapterMarkers } = useMemo(() => {
     const starts: number[] = [];
+    const markers: ChapterMarker[] = [];
     let acc = 0;
     const dict = audioDurations as Record<string, Record<string, number>>;
     for (const c of CHAPTERS) {
       const chDict = dict[c.id] ?? {};
+      const chapterStart = acc;
       c.narrations.forEach((text, i) => {
         const measured = chDict[String(i + 1)];
         const d = measured && measured > 0 ? measured : estimateStepSeconds(text);
         starts.push(acc);
         acc += d;
       });
+      markers.push({ id: c.id, title: c.title, start: chapterStart, end: acc });
     }
-    return { stepStarts: starts, totalDuration: acc };
+    return { stepStarts: starts, totalDuration: acc, chapterMarkers: markers };
   }, []);
 
   const [rate, setRate] = useState<number>(loadRate);
@@ -172,6 +175,7 @@ export default function App() {
         rateMin={RATE_MIN}
         rateMax={RATE_MAX}
         rateStep={RATE_STEP}
+        chapters={chapterMarkers}
         onTogglePlay={handleTogglePlay}
         onSeek={handleSeek}
         onRateChange={handleRateChange}

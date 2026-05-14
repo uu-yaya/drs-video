@@ -6,11 +6,12 @@
   right: 0;
   bottom: 0;
   z-index: 60;
-  height: 64px;
+  /* Taller now that we show the current-chapter label below the timeline */
+  min-height: 84px;
   display: flex;
   align-items: center;
   gap: 18px;
-  padding: 0 28px;
+  padding: 12px 28px;
   background: linear-gradient(
     to bottom,
     rgba(10, 18, 36, 0.0) 0%,
@@ -56,10 +57,18 @@
   outline-offset: 2px;
 }
 
+/* progress track wrapper holds the timeline + current-chapter label */
+.vc-track-wrap {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
 /* progress track */
 .vc-track {
   position: relative;
-  flex: 1;
   height: 18px;
   display: flex;
   align-items: center;
@@ -126,6 +135,87 @@
 .vc-track:hover .vc-track-input,
 .video-controls:focus-within .vc-track-input {
   opacity: 1;
+}
+
+/* Chapter boundary ticks on the timeline */
+.vc-track-tick {
+  position: absolute;
+  top: 50%;
+  width: 2px;
+  height: 12px;
+  margin-top: -6px;
+  background: rgba(255, 255, 255, 0.55);
+  pointer-events: none;
+  transform: translateX(-50%);
+  z-index: 1;
+}
+
+.vc-track:hover .vc-track-tick {
+  background: rgba(255, 255, 255, 0.85);
+}
+
+/* Hover tooltip showing chapter title + position */
+.vc-track-tooltip {
+  position: absolute;
+  bottom: 28px;
+  transform: translateX(-50%);
+  background: rgba(10, 18, 36, 0.96);
+  border: 2px solid var(--accent);
+  padding: 8px 12px;
+  pointer-events: none;
+  white-space: nowrap;
+  z-index: 5;
+  box-shadow: 0 0 16px rgba(77, 210, 255, 0.25);
+}
+
+.vc-track-tooltip-title {
+  font-family: var(--font-display-cn);
+  font-size: 14px;
+  color: var(--text);
+  letter-spacing: -0.01em;
+  font-weight: 700;
+}
+
+.vc-track-tooltip-time {
+  margin-top: 2px;
+  font-size: 11px;
+  color: var(--accent);
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+}
+
+.vc-track-tooltip-range {
+  color: var(--text-mute);
+}
+
+/* Current-chapter label always visible below the timeline */
+.vc-current-chapter {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  font-size: 12px;
+  color: var(--text-2);
+  letter-spacing: 0.02em;
+  min-height: 16px;
+}
+
+.vc-current-chapter-tag {
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  color: var(--accent);
+}
+
+.vc-current-chapter-title {
+  font-family: var(--font-display-cn);
+  font-size: 13px;
+  color: var(--text);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.vc-current-chapter-range {
+  font-variant-numeric: tabular-nums;
+  color: var(--text-mute);
 }
 
 /* time display */
