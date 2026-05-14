@@ -1,0 +1,6 @@
+/* Chapter 09 · profile-meta-detail — class prefix .pd- */
+
+.pd-scene {
+  position: absolute;
+  inset: 0;
+}

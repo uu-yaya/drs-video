@@ -1,0 +1,28 @@
+# Node modules
+**/node_modules/
+
+# Build output
+**/dist/
+**/build/
+
+# Vite cache
+**/.vite/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Local env
+.env
+.env.local
+.env.*.local
+
+# Temp
+/tmp/
+*.tmp

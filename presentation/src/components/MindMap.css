@@ -1,0 +1,245 @@
+/* MindMap shared component — class prefix .mm- */
+
+.mm-canvas {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.mm-header {
+  position: absolute;
+  top: 56px;
+  left: 96px;
+  right: 96px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.mm-ord {
+  font-size: 16px;
+  color: var(--accent);
+  letter-spacing: 0.22em;
+}
+
+.mm-title {
+  margin: 0;
+  font-size: 44px;
+  color: var(--text);
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.mm-subtitle {
+  font-size: 16px;
+  color: var(--text-mute);
+  letter-spacing: 0.18em;
+}
+
+.mm-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ── root node ── */
+.mm-root {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+}
+
+.mm-root-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 28px 44px;
+  background: var(--surface-3);
+  border: 3px solid var(--accent);
+  min-width: 240px;
+  text-align: center;
+  box-shadow: 0 0 48px rgba(77, 210, 255, 0.18);
+}
+
+.mm-root-en {
+  font-size: 16px;
+  color: var(--accent);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+}
+
+.mm-root-cn {
+  font-size: 40px;
+  color: var(--text);
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+/* ── branch nodes ── */
+.mm-branch {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  transition: opacity 350ms cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.mm-branch-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px 20px;
+  background: var(--surface-2);
+  border: 2px solid var(--rule);
+  min-width: 180px;
+  text-align: center;
+  transition: border-color 350ms cubic-bezier(0.19, 1, 0.22, 1),
+              transform 350ms cubic-bezier(0.19, 1, 0.22, 1),
+              background 350ms cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.mm-branch-en {
+  font-size: 13px;
+  color: var(--text-mute);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  word-break: break-all;
+}
+
+.mm-branch-cn {
+  font-size: 24px;
+  color: var(--text);
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+}
+
+.mm-branch-note {
+  font-size: 11px;
+  color: var(--text-faint);
+  letter-spacing: 0.15em;
+}
+
+.mm-branch-active {
+  /* keep the active branch visible even when the floating card overlaps */
+  z-index: 7;
+}
+
+.mm-branch-active .mm-branch-inner {
+  border-color: var(--accent);
+  background: var(--surface-3);
+  transform: scale(1.12);
+  box-shadow: 0 0 32px rgba(77, 210, 255, 0.32);
+}
+
+.mm-branch-active .mm-branch-en {
+  color: var(--accent);
+}
+
+.mm-branch-active .mm-branch-note {
+  color: var(--accent);
+}
+
+.mm-branch-dim {
+  opacity: 0.35;
+}
+
+/* ── floating detail card ── */
+.mm-detail-card {
+  position: absolute;
+  width: 460px;
+  /* height grows with content; cap matches CARD_H_EST in MindMap.tsx so JS clamp guarantees no stage overflow */
+  max-height: 560px;
+  overflow: hidden;
+  transform: translate(-50%, -50%);
+  background: var(--surface-3);
+  border: 2px solid var(--accent);
+  padding: 20px 24px;
+  z-index: 6;
+  pointer-events: none;
+  box-shadow: 0 0 48px rgba(77, 210, 255, 0.35);
+  animation: mm-card-pop 500ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes mm-card-pop {
+  0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.82); }
+  60%  { opacity: 1; transform: translate(-50%, -50%) scale(1.04); }
+  100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+.mm-detail-card-head {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 14px;
+}
+
+.mm-detail-card-en {
+  font-size: 18px;
+  color: var(--accent);
+  font-weight: 500;
+  letter-spacing: 0;
+  word-break: break-all;
+  line-height: 1.2;
+}
+
+.mm-detail-card-cn {
+  font-size: 32px;
+  color: var(--text);
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.mm-detail-card-rule {
+  height: 0;
+  border-top: 1px dashed var(--accent);
+  opacity: 0.6;
+  margin-bottom: 14px;
+}
+
+.mm-detail-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mm-detail-card-row {
+  display: grid;
+  grid-template-columns: 76px 1fr;
+  gap: 14px;
+  align-items: baseline;
+}
+
+.mm-detail-card-row-label {
+  font-size: 11px;
+  color: var(--text-mute);
+  letter-spacing: 0.2em;
+}
+
+.mm-detail-card-row-value {
+  font-size: 16px;
+  color: var(--text);
+  line-height: 1.4;
+  letter-spacing: -0.005em;
+}
+
+.mm-detail-card-row-value-mono {
+  font-family: var(--font-mono);
+  font-size: 15px;
+  letter-spacing: 0;
+}
+
+.mm-detail-card-row-value-accent {
+  color: var(--accent);
+}
+
+.mm-detail-card-empty {
+  font-size: 12px;
+  color: var(--text-mute);
+  letter-spacing: 0.22em;
+  padding: 8px 0;
+}

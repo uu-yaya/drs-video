@@ -1,0 +1,6 @@
+/* Chapter 02 · boundary-overview — class prefix .bo- */
+
+.bo-scene {
+  position: absolute;
+  inset: 0;
+}

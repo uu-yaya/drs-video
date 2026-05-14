@@ -1,0 +1,6 @@
+/* Chapter 05 · modules — class prefix .mo- */
+
+.mo-scene {
+  position: absolute;
+  inset: 0;
+}

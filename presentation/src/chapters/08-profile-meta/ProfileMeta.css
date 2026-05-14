@@ -1,0 +1,6 @@
+/* Chapter 08 · profile-meta — class prefix .pm- */
+
+.pm-scene {
+  position: absolute;
+  inset: 0;
+}

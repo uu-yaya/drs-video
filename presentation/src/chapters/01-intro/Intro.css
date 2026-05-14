@@ -1,0 +1,365 @@
+/* Chapter 01 · intro — class prefix .in- */
+
+.in-scene {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.in-center {
+  justify-content: center;
+  align-items: center;
+}
+
+/* ─── step 0 — proposition ─── */
+.in-prop {
+  margin: 0;
+  font-size: 180px;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  display: flex;
+  gap: 8px;
+}
+
+.in-prop-em {
+  color: var(--accent);
+}
+
+.in-prop-tick {
+  margin-top: 56px;
+  width: 0;
+  border-top: 2px dashed var(--accent);
+  opacity: 0;
+  animation: in-line-draw 500ms 500ms cubic-bezier(0.19, 1, 0.22, 1) forwards;
+}
+
+@keyframes in-line-draw {
+  from { opacity: 0; width: 0; }
+  to   { opacity: 0.7; width: 320px; }
+}
+
+/* ─── step 1 — question ─── */
+.in-ghost {
+  font-size: 56px;
+  color: var(--text-faint);
+  margin-bottom: 64px;
+  opacity: 0.6;
+  letter-spacing: -0.02em;
+}
+
+.in-question {
+  margin: 0;
+  font-size: 180px;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  display: flex;
+  gap: 12px;
+}
+
+.in-question-em {
+  color: var(--accent);
+}
+
+/* ─── step 2 — DRS as answer ─── */
+.in-answer-kicker {
+  margin-bottom: 56px;
+  color: var(--accent);
+  font-size: 16px;
+}
+
+.in-answer {
+  margin: 0;
+  font-size: 140px;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.in-answer-drs {
+  color: var(--accent);
+  font-family: var(--font-display-en);
+  font-weight: 600;
+  font-size: 180px;
+  letter-spacing: 0;
+}
+
+/* ─── step 3 — document card ─── */
+.in-doc {
+  position: relative;
+  padding: 80px 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  min-width: 1100px;
+}
+
+.in-doc-corners {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.in-doc-corner {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  border: 2px solid var(--accent);
+}
+
+.in-doc-corner-tl {
+  top: 0;
+  left: 0;
+  border-right: none;
+  border-bottom: none;
+}
+
+.in-doc-corner-tr {
+  top: 0;
+  right: 0;
+  border-left: none;
+  border-bottom: none;
+}
+
+.in-doc-corner-bl {
+  bottom: 0;
+  left: 0;
+  border-right: none;
+  border-top: none;
+}
+
+.in-doc-corner-br {
+  bottom: 0;
+  right: 0;
+  border-left: none;
+  border-top: none;
+}
+
+.in-doc-meta {
+  font-size: 16px;
+  color: var(--accent);
+  letter-spacing: 0.22em;
+}
+
+.in-doc-en {
+  font-size: 88px;
+  color: var(--text-2);
+  letter-spacing: -0.01em;
+  font-weight: 500;
+}
+
+.in-doc-cn {
+  font-size: 128px;
+  color: var(--text);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.in-doc-rule {
+  width: 240px;
+  border-top: 2px dashed var(--accent);
+  opacity: 0.5;
+  margin: 8px 0;
+}
+
+.in-doc-tag {
+  font-size: 16px;
+  color: var(--text-mute);
+}
+
+/* ─── step 4 — preview entry ─── */
+.in-preview-kicker {
+  margin-bottom: 56px;
+  color: var(--accent);
+  font-size: 16px;
+}
+
+.in-preview {
+  margin: 0;
+  font-size: 156px;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  display: flex;
+  align-items: baseline;
+  gap: 20px;
+}
+
+.in-preview-num {
+  color: var(--accent);
+  font-family: var(--font-display-en);
+  font-weight: 500;
+  font-size: 200px;
+  letter-spacing: 0;
+}
+
+/* ─── step 5/6 — topic cards ─── */
+.in-topics-scene {
+  justify-content: center;
+  align-items: stretch;
+  padding: var(--stage-pad-y) var(--stage-pad-x);
+}
+
+.in-topics-kicker {
+  font-size: 16px;
+  color: var(--accent);
+  margin-bottom: 56px;
+  text-align: center;
+}
+
+.in-topics {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 40px;
+  align-items: stretch;
+}
+
+.in-topic {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 32px 28px;
+  border: 2px solid var(--rule);
+  background: var(--surface-2);
+  min-height: 280px;
+  opacity: 0;
+  transform: translateY(24px);
+  animation: in-topic-rise 600ms cubic-bezier(0.19, 1, 0.22, 1) forwards;
+}
+
+@keyframes in-topic-rise {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.in-topic-num {
+  font-size: 14px;
+  color: var(--accent);
+  letter-spacing: 0.22em;
+}
+
+.in-topic-en {
+  font-size: 36px;
+  color: var(--text);
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 1.1;
+  margin-top: 8px;
+}
+
+.in-topic-cn {
+  font-size: 44px;
+  color: var(--text);
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin-top: auto;
+}
+
+.in-topic-tick {
+  position: absolute;
+  bottom: 0;
+  left: 28px;
+  width: 64px;
+  border-top: 2px dashed var(--accent);
+  opacity: 0.6;
+}
+
+/* ─── step 7 — 5 actions ─── */
+.in-actions-scene {
+  justify-content: center;
+  align-items: stretch;
+}
+
+.in-actions-kicker {
+  font-size: 16px;
+  color: var(--accent);
+  margin-bottom: 80px;
+  text-align: center;
+}
+
+.in-actions {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 28px;
+}
+
+.in-action {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  padding: 40px 16px;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: in-action-rise 500ms cubic-bezier(0.19, 1, 0.22, 1) forwards;
+}
+
+@keyframes in-action-rise {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.in-action-en {
+  font-size: 28px;
+  color: var(--accent);
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  font-family: var(--font-display-en);
+}
+
+.in-action-cn {
+  font-size: 84px;
+  color: var(--text);
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.in-actions-rule {
+  margin-top: 80px;
+  align-self: center;
+  width: 0;
+  border-top: 2px dashed var(--accent);
+  opacity: 0;
+  animation: in-actions-rule-draw 600ms 1500ms cubic-bezier(0.19, 1, 0.22, 1) forwards;
+}
+
+@keyframes in-actions-rule-draw {
+  from { opacity: 0; width: 0; }
+  to   { opacity: 0.6; width: 480px; }
+}
+
+/* ─── step 8 — time promise ─── */
+.in-time {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 44px;
+}
+
+.in-time-clock {
+  font-size: 260px;
+  line-height: 0.9;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+
+.in-time-bar {
+  width: 320px;
+  border-top: 2px dashed var(--accent);
+  opacity: 0.6;
+}
+
+.in-time-label {
+  font-size: 64px;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}

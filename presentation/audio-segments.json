@@ -1,0 +1,1328 @@
+[
+  {
+    "chapter": "intro",
+    "step": 1,
+    "text": "做桌宠这事，最早的一个判断就是——它得懂用户。如果它什么都不记得、每次见面像第一次，长期陪伴感立不住。整个产品想解决的，就是怎么让桌宠记住你、理解你、跟着你的节奏走。但这件事落到工程上，就变成了一个非常具体的问题。",
+    "audio": "intro/1.mp3"
+  },
+  {
+    "chapter": "intro",
+    "step": 2,
+    "text": "懂用户这事抽象，落到工程上就一个问题——桌宠到底需要哪些数据。你聊了什么、玩了什么、在干嘛、什么情绪，这些都得有数据撑着。问题在于：哪些能采、哪些不能采、采来之后能用多久、用户能不能删。这是文档要回答的核心。",
+    "audio": "intro/2.mp3"
+  },
+  {
+    "chapter": "intro",
+    "step": 3,
+    "text": "我们的回答方式是出一份 DRS，数据需求规格说明书。说白了就是一张清单——桌宠需要什么数据、每条数据怎么来、用户怎么控制。它不是产品方案、也不是技术架构，是一份契约：把每个字段的边界提前写死，避免后面靠口头约定踩雷。",
+    "audio": "intro/3.mp3"
+  },
+  {
+    "chapter": "intro",
+    "step": 4,
+    "text": "文档全名叫 desktop-pet 的数据需求规格说明书。我们把它划成一份独立产物，原因是数据这块讲不清楚，后面隐私、合规、用户信任全都立不住。所以哪怕只服务一个桌宠产品，这份契约也得先单独写出来，让产研双方都看到同一张表。",
+    "audio": "intro/4.mp3"
+  },
+  {
+    "chapter": "intro",
+    "step": 5,
+    "text": "接下来我们用 8 个主题串一遍这份文档。先讲整体——数据边界、数据循环、模块表、用户开关；再深入——画像怎么拆、元字段怎么追溯、角色相似度怎么判定；最后回到契约本身。8 个主题走完，整份 DRS 的骨架就清楚了。",
+    "audio": "intro/5.mp3"
+  },
+  {
+    "chapter": "intro",
+    "step": 6,
+    "text": "前 4 个主题讲整体。第一个是数据边界，回答哪些能采、哪些不能采。第二个是五类数据循环，讲数据怎么在桌宠和记忆系统之间流。第三个是 13 个数据模块，每块为什么这样设计。第四个是 12 项用户开关，几乎全是默认关。",
+    "audio": "intro/6.mp3"
+  },
+  {
+    "chapter": "intro",
+    "step": 7,
+    "text": "后 4 个主题往细看。第五讲用户画像 7 个子对象——身份、关系、玩法、陪伴、进度、社交。第六讲元字段，每条画像怎么追溯到上游证据。第七是角色相似度——桌宠的核心卖点。第八收尾，把所有约束总结成一份契约。",
+    "audio": "intro/7.mp3"
+  },
+  {
+    "chapter": "intro",
+    "step": 8,
+    "text": "整份文档其实就围绕同一组动作——采集、整理、查询、删除、更正。每一条数据都得能采进来、能被整理成画像、能被桌宠查到引用、能被用户删掉、也能被用户改写。少任何一个动作，就不算契约。这是后面所有章节共同的底线。",
+    "audio": "intro/8.mp3"
+  },
+  {
+    "chapter": "boundary-overview",
+    "step": 1,
+    "text": "数据边界是这份文档的第一章，先把红绿灯划清楚再讲细节。我们把所有可能进入桌宠的数据切成 4 类——核心业务、授权增强、语义结果保留、禁止采集与回写。每一类的待遇都不一样：哪些直接用、哪些要授权、哪些只留语义、哪些一行都不碰。",
+    "audio": "boundary-overview/1.mp3"
+  },
+  {
+    "chapter": "boundary-overview",
+    "step": 2,
+    "text": "第一类是核心业务数据，桌宠骨架靠它撑——用户自己改的设置、合作游戏推过来的状态、你和桌宠的对话、还有相似度测定结果。优先级最高，因为这些是用户直接看到或亲手设定的。最硬的一条是：AI 不能自动开授权、不能改删除策略、也不能覆盖用户改过的字段。",
+    "audio": "boundary-overview/2.mp3"
+  },
+  {
+    "chapter": "boundary-overview",
+    "step": 3,
+    "text": "第二类是授权增强数据，默认全关，得用户主动勾选才用。包括看 PC 上在用什么 app、外部应用通过 MCP 推过来的元数据、看屏幕的 VLM、系统音频，还有产品内大模型的分析。这块的逻辑是：能让桌宠更懂你，但隐私敏感、成本高，所以宁可让用户慢一点开。",
+    "audio": "boundary-overview/3.mp3"
+  },
+  {
+    "chapter": "boundary-overview",
+    "step": 4,
+    "text": "第三类是语义结果保留。这条专门处理一类纠结的数据——原图、原始音频、raw OS context 本身敏感，但里面有桌宠想要的语义。我们的做法是：原始内容当场丢，只保留派生出来的语义标签，比如场景标签、active app 名、输入强度桶。原始 payload 不进库。",
+    "audio": "boundary-overview/4.mp3"
+  },
+  {
+    "chapter": "boundary-overview",
+    "step": 5,
+    "text": "第四类是死禁——直接列出哪些数据我们一行都不碰。Recall 式的后台截图、键盘按了什么字、微信邮件正文、原始截图音频、人声通话转写。不是默认关、不是要授权，是写死了不采、不存、不回写。这一条非常重要，下一章会逐条展开为什么。",
+    "audio": "boundary-overview/5.mp3"
+  },
+  {
+    "chapter": "boundary-redlines",
+    "step": 1,
+    "text": "上一章说有 5 条死禁红线，这章逐条讲为什么这么划。它们不是承诺、不是口头约束，是字段表里直接落地的——任何模型、任何后台任务、就算用户授权也开不了。先看整体：Recall 后台截图、键盘文本、第三方正文、原始截图音频、人声通话。",
+    "audio": "boundary-redlines/1.mp3"
+  },
+  {
+    "chapter": "boundary-redlines",
+    "step": 2,
+    "text": "第一条是 Recall 式的后台截图，不接。微软的 Windows Recall 是反面教材——后台持续全屏截图、自动索引、可以翻你过去几天看过什么。一个长期记忆系统一旦用这种数据源，用户就再也信不过来。所以哪怕方便、哪怕有人提议，我们一行也不接。",
+    "audio": "boundary-redlines/2.mp3"
+  },
+  {
+    "chapter": "boundary-redlines",
+    "step": 3,
+    "text": "第二条是键盘文本和 keylog，不存。按了什么键、输入了什么字、剪贴板里复制了什么，一律不进系统。问题在于这种数据一旦留下来，密码、聊天、搜索全暴露。我们只允许低敏统计——你打字快不快、节奏密不密，桶化成 low、mid、high 三档，仅此而已。",
+    "audio": "boundary-redlines/3.mp3"
+  },
+  {
+    "chapter": "boundary-redlines",
+    "step": 4,
+    "text": "第三条是第三方应用的正文，不读。包括微信、邮件、飞书文档、会议记录——这些都是别的产品的核心数据，我们没资格碰。就算后面通过 MCP 接进来，也只读元数据：今天有几条消息、几个待办、app 自己生成的摘要。具体内容、原文一律拒收。",
+    "audio": "boundary-redlines/4.mp3"
+  },
+  {
+    "chapter": "boundary-redlines",
+    "step": 5,
+    "text": "第四条是原始截图和原始音频，不上传、不训练、不留帧日志。VLM 需要看屏幕，是为了识别游戏场景，但看完之后只回写语义标签，比如 boss_fight、low_hp。原图当场丢，不进库、不外发。这条是 VLM 这个功能能上线的前提，少这条整个能力就要砍掉。",
+    "audio": "boundary-redlines/5.mp3"
+  },
+  {
+    "chapter": "boundary-redlines",
+    "step": 6,
+    "text": "第五条是人声、通话、会议内容，不采、不转、不写。我们想要的是音乐氛围这种低敏语义——比如现在在放激昂音乐、你可能在打硬仗。但谁在说话、说了什么、跟谁通话，一概不知道，也不允许 ASR 转写。这是和系统音频整个能力绑定的硬边界。",
+    "audio": "boundary-redlines/6.mp3"
+  },
+  {
+    "chapter": "loop",
+    "step": 1,
+    "text": "光讲哪些数据能用还不够，得讲清楚数据怎么在桌宠和记忆系统之间流，不然每条数据的责任边界都说不清。我们把整套循环切成 5 条路径——用户配置流入、记忆系统供给、桌宠实时生成、桌宠回写、最后一条压根不进循环。先看整体。",
+    "audio": "loop/1.mp3"
+  },
+  {
+    "chapter": "loop",
+    "step": 2,
+    "text": "路径一是用户主动写进来的——昵称、关系偏好、打扰边界、各种授权开关、删除、清空、重新总结、还有那句「以后别这样记」。这条优先级最高，原因很直白：用户是这个数据系统的最终所有者。所以 AI 不能自动开授权、也不能覆盖用户改过的任何字段。",
+    "audio": "loop/2.mp3"
+  },
+  {
+    "chapter": "loop",
+    "step": 3,
+    "text": "路径二是记忆系统反过来供给桌宠——把整理好的用户画像、长期记忆、聊天摘要、游戏进度、成就、高光都喂给桌宠。关键约束有一条：每条可解释的数据都得能反查到来源或证据。这样用户问「你凭什么知道我喜欢稳健发育」，桌宠能答出来。",
+    "audio": "loop/3.mp3"
+  },
+  {
+    "chapter": "loop",
+    "step": 4,
+    "text": "路径三是桌宠这边实时生成的——你说一句话它回一句、看到你死了给个建议、看屏幕识别个场景。这些都是当下服务当下，默认不进长期记忆。原因是这类数据量太大，全存会污染画像；只有用户主动保存、或者明确需要长期引用的，才走回写。",
+    "audio": "loop/4.mp3"
+  },
+  {
+    "chapter": "loop",
+    "step": 5,
+    "text": "路径四是桌宠把东西写回记忆系统——首方对话、用户反馈、用户更正、AI 推断出来的画像项、保存的高光、还有相似度测定结果。关键是回写不能裸写，必须带来源、时间、证据、授权快照。这样用户后面想删、想反查、想撤回授权，都能定位到具体哪条记录。",
+    "audio": "loop/5.mp3"
+  },
+  {
+    "chapter": "loop",
+    "step": 6,
+    "text": "路径五最重要——压根不进循环。原始截图、原始音频、按键内容、第三方正文、raw OS context 这些根本不采、不存、不回写。它对应的就是上一章那 5 条死禁。单独拎出来讲，是想强调一件事：循环图里看不到，不代表偷偷在传——是写死了不存在。",
+    "audio": "loop/6.mp3"
+  },
+  {
+    "chapter": "modules",
+    "step": 1,
+    "text": "下面来过一遍桌宠记忆系统里所有的数据模块。一共 13 块，从用户聊了什么、电脑在干嘛、游戏发生了什么，一直到最终画像和角色相似度。我们一个一个看为什么这样设计。",
+    "audio": "modules/1.mp3"
+  },
+  {
+    "chapter": "modules",
+    "step": 2,
+    "text": "聊天这块是整个记忆系统的根基。我们把它定到最高优先级，原因很直白——桌宠如果不记得你刚说过什么，长期陪伴感立不住。所以每段对话都会被压缩成原子事实和情节摘要，反过来喂给桌宠下一轮回答。但有条线我们划得很死：只读你和桌宠之间的话，你在微信、邮件里聊什么，一个字都不碰。",
+    "audio": "modules/2.mp3"
+  },
+  {
+    "chapter": "modules",
+    "step": 3,
+    "text": "PC 进程这块要解决的问题很具体——桌宠什么时候该闭嘴。如果你正在打 BOSS、它跳出来唠嗑，体验直接崩。所以我们只看你当前在用什么 app、是不是全屏、有没有空闲，就这几个低敏信号，足以判断你在专注、在工作、还是已经走开。app 内容我们一行都不读。",
+    "audio": "modules/3.mp3"
+  },
+  {
+    "chapter": "modules",
+    "step": 4,
+    "text": "UI 行为这块比 PC 进程再细一层，但我们卡得也最严。一边采输入强度——你打字快还是慢，鼠标点得密不密，都是桶化的统计，绝对不存原始按键。另一边读界面控件类型，比如焦点在按钮还是输入框。窗口标题要读，但去除文件名、路径、用户名之后才进系统。",
+    "audio": "modules/4.mp3"
+  },
+  {
+    "chapter": "modules",
+    "step": 5,
+    "text": "MCP 这块定位很特殊——它是桌宠拿外部 app 上下文的唯一通道。你授权之后，比如滴答清单 / Steam，app 会主动向桌宠报告：今天有几个待办、玩了多久游戏。但只能拿元数据和摘要，正文、聊天记录、邮件原文，一律拒收。每个 app 都要你单独勾选授权。",
+    "audio": "modules/5.mp3"
+  },
+  {
+    "chapter": "modules",
+    "step": 6,
+    "text": "idip 是合作游戏主动报给我们的状态——你练到几级、卡在第几章、本周任务完成了几个。桌宠靠这个理解你的进度。我们没有去爬游戏后端，全是首方推过来的数据，所以你的游戏账号、付费记录、实名信息，这些我们压根拿不到。",
+    "audio": "modules/6.mp3"
+  },
+  {
+    "chapter": "modules",
+    "step": 7,
+    "text": "实时事件流和 idip 状态是配套的，区别在时间粒度。idip 告诉桌宠你「在哪」，实时事件告诉桌宠「发生了什么」——刚死、刚通关、刚结算。桌宠靠这个做即时反馈：连死它能安慰、突破它能祝贺。事件 payload 只允许游戏内字段，跟现实身份无关。",
+    "audio": "modules/7.mp3"
+  },
+  {
+    "chapter": "modules",
+    "step": 8,
+    "text": "VLM 是看屏幕的能力。它能识别你这局是在打 BOSS 还是过剧情，但成本很大——隐私敏感、要消耗算力。所以我们做了三道闸：默认关、按 app 单独开、开启时 UI 上必须显示「正在看屏幕」。原图当场丢，不上传、不训练、不留帧日志。",
+    "audio": "modules/8.mp3"
+  },
+  {
+    "chapter": "modules",
+    "step": 9,
+    "text": "current_context 不是一个数据来源，是一个汇总切面。各路信号进来之后，它输出四个判断——你现在在干嘛、什么情绪、能不能打扰、注意力在哪。桌宠每次开口前都查一下这个切面。如果判断是「在打 BOSS、紧张、不能打扰」，那它就闭嘴。",
+    "audio": "modules/9.mp3"
+  },
+  {
+    "chapter": "modules",
+    "step": 10,
+    "text": "profile_meta 不是画像内容，是画像的「身份证」。每一条画像字段后面都挂一份 meta——这条是从哪来的、谁生成的、有几条证据撑着、置信度多少。我们设计这个，就是为了应对一种场景：用户问桌宠「你凭什么说我喜欢稳健发育」，桌宠必须能反查证据答出来。",
+    "audio": "modules/10.mp3"
+  },
+  {
+    "chapter": "modules",
+    "step": 11,
+    "text": "profile 是桌宠长期理解你的核心，分七个子对象——身份、桌宠关系、游戏偏好、玩法风格、陪伴偏好、进度、社交。AI 可以基于授权数据写推断项，但有两条硬规则：不写现实人格，比如不会出现「控制欲强」这种标签；以及你改过的字段，AI 不许再覆盖。",
+    "audio": "modules/11.mp3"
+  },
+  {
+    "chapter": "modules",
+    "step": 12,
+    "text": "高光是桌宠主动生成的「值得记住的瞬间」——首次单杀、首次通关、赛季达成。AI 先给你一份草稿：标题、摘要、标签，但只是建议。你保存或者编辑之后才正式入库。引用原文之前必须先过个人身份信息检测，标了私密的高光也不会出现在分享卡片里。",
+    "audio": "modules/12.mp3"
+  },
+  {
+    "chapter": "modules",
+    "step": 13,
+    "text": "user_preferences 是整套系统的控制台。所有授权开关、删除策略、内容生成偏好，包括「以后别这样记」这种用户更正规则，全都汇总在这里。原则只有一条：用户主动勾选才生效，AI 永远不能自己改设置。这是我们和用户之间最硬的契约。",
+    "audio": "modules/13.mp3"
+  },
+  {
+    "chapter": "modules",
+    "step": 14,
+    "text": "最后一个是角色相似度测定，这是桌宠的核心卖点——告诉你像游戏里哪个角色、像在哪里。但它的开启代价很重，所以默认关，每次测定都要你主动触发并同意。测出来的结果默认不影响日常陪伴，避免一次测定就把整个桌宠人设带偏，除非你单独打开「用于陪伴」这个开关。",
+    "audio": "modules/14.mp3"
+  },
+  {
+    "chapter": "switches",
+    "step": 1,
+    "text": "用户开关一共 12 项，几乎全是默认关。设计原则就一条：用户没主动勾选的能力，桌宠就当它不存在。5 项最高优先级在首启会问你、6 项 P1 默认关、还有 1 项扩展能力也默认关。我们宁可桌宠开局笨一点，也不要它默默把数据吃进去。",
+    "audio": "switches/1.mp3"
+  },
+  {
+    "chapter": "switches",
+    "step": 2,
+    "text": "第一个开关是聊天入长期记忆。它决定的是：你和桌宠的对话能不能进长期画像。这是个最高优先级开关，首启时会弹窗问你；你没明确选就当关。原因是聊天数据最敏感、也最有价值——既能让桌宠懂你，也最容易踩隐私雷。所以绝对不能默默打开。",
+    "audio": "switches/2.mp3"
+  },
+  {
+    "chapter": "switches",
+    "step": 3,
+    "text": "第二个是游戏事件能不能进长期画像。这块我们做了拆分——实时反应，比如你刚死它安慰一下，默认能用，因为不进长期库；但要把游戏数据沉淀成进度画像、成就画像、目标画像，就要单独授权。把「当下用一下」和「长期记下来」分开，是这个开关的核心。",
+    "audio": "switches/3.mp3"
+  },
+  {
+    "chapter": "switches",
+    "step": 4,
+    "text": "第三个是 AI 推断画像项生成——允不允许产品内大模型基于授权数据帮你整理画像字段，比如自动总结出「偏好法师」「习惯稳健发育」。首启会问；用户随时能暂停。一旦暂停，AI 就不再新增推断项，连那条一句话画像摘要都停止自动重写。",
+    "audio": "switches/4.mp3"
+  },
+  {
+    "chapter": "switches",
+    "step": 5,
+    "text": "第四个是记忆管理，这块始终开着、不需要授权。包括删除对话、删除日记、删除高光、删除某条画像字段；清空整个画像；点「重新总结我」让 AI 重算；还有那句「以后别这样记」。这是用户最硬的权利——不管其他开关怎么设，删除和更正永远在。",
+    "audio": "switches/5.mp3"
+  },
+  {
+    "chapter": "switches",
+    "step": 6,
+    "text": "第五个是基础陪伴偏好——打扰强度、复盘颗粒度、失败之后想不想被复盘。首启可选；不选就走保守默认，意思是桌宠尽量少打扰、少追问。把这块单独列成开关是因为：陪伴方式没有对错，但桌宠不能猜，得让用户先告诉它你是什么风格。",
+    "audio": "switches/6.mp3"
+  },
+  {
+    "chapter": "switches",
+    "step": 7,
+    "text": "第六个开始就是 P1，全部默认关。第一个是行为数据画像——授权之后桌宠可以用 PC 行为信号（在用什么 app、是不是全屏、键盘节奏桶）来判断你能不能打扰，或者推断你玩游戏的节奏风格。但只看信号、不读内容，开关也单独拎出来由你勾。",
+    "audio": "switches/7.mp3"
+  },
+  {
+    "chapter": "switches",
+    "step": 8,
+    "text": "第七个是当前窗口画面理解，也就是 VLM。授权之后桌宠能看你当前授权的游戏窗口，生成场景标签——「boss 战」、「过剧情」、「结算页」。但成本很高：算力、隐私、心理负担都大。所以默认关，而且要按 app 单独开，不能一开就是全局。",
+    "audio": "switches/8.mp3"
+  },
+  {
+    "chapter": "switches",
+    "step": 9,
+    "text": "第八个是界面文字读取。和 VLM 配套但更具体——桌宠可以读你当前授权窗口里的按钮文字、弹窗提示、游戏提示语，这样它能跟着你的界面状态做反应。但同样要按 app 单独开，而且只读界面文字，不读聊天框、邮件、文档正文，也不读密码框。",
+    "audio": "switches/9.mp3"
+  },
+  {
+    "chapter": "switches",
+    "step": 10,
+    "text": "第九个是 MCP app 接入——桌宠拿外部 app 上下文的通道。比如你授权滴答清单它能知道你今天有几个待办，授权 Steam 它能知道你玩了多久。但每个 app 都要你单独勾选授权，而且只读元数据和摘要，正文一律拒收。默认整个列表是空的。",
+    "audio": "switches/10.mp3"
+  },
+  {
+    "chapter": "switches",
+    "step": 11,
+    "text": "第十个是日记和高光生成。允许桌宠根据你的对话和游戏事件，自动起草一份日记、或者把「首次单杀」这种瞬间标成高光卡片。但只是建议——你点保存才进库，标了私密的也不会出现在分享卡片里。这是把「AI 帮你写」和「你决定要不要留」分开。",
+    "audio": "switches/11.mp3"
+  },
+  {
+    "chapter": "switches",
+    "step": 12,
+    "text": "第十一个是角色相似度测定——告诉你像游戏里哪个角色、像在哪里。这是桌宠的核心卖点，但代价很重——要调用大量画像数据、要让你接受被分析。所以默认关，不做后台自动重测，每一次都得你主动点「测一下」、并且当场同意本次授权。",
+    "audio": "switches/12.mp3"
+  },
+  {
+    "chapter": "switches",
+    "step": 13,
+    "text": "第十二个是系统音频音乐和氛围感知，目前还在扩展能力列表里。意思是产品还没正式接入，但接的话也只能提取低敏语义，比如现在在放激昂音乐、你可能在打硬仗。原始音频、人声、通话、转写一概不许。默认关，开了也走严格白名单。",
+    "audio": "switches/13.mp3"
+  },
+  {
+    "chapter": "fields-chat",
+    "step": 1,
+    "text": "chat 这块是整个记忆系统的根基。我们在这里盯五个字段——原文、原子事实、情节、情绪信号、原话可引用标记。逻辑其实很直白：原话是底，AI 把它压成事实和情节，再加一层情绪和引用授权。所有画像追溯，最后都得能回到这五个字段上找证据。",
+    "audio": "fields-chat/1.mp3"
+  },
+  {
+    "chapter": "fields-chat",
+    "step": 2,
+    "text": "chat_text 这个字段，本质上就是用户和桌宠说过的每一句话，原汁原味地存下来。我们必须留原文，是因为后面的事实抽取、情节摘要、画像推断都得能反查到原句。但有一条线我们划得很死——只读你和桌宠之间的对话，第三方 IM、邮件，一个字都不碰。",
+    "audio": "fields-chat/2.mp3"
+  },
+  {
+    "chapter": "fields-chat",
+    "step": 3,
+    "text": "atomic_facts 是 AI 把对话压出的「最小一句结论」。比如你聊了十分钟稳健打法，它压出来就是「用户偏好稳健策略」。我们要它，是因为原文太长没法直接喂给桌宠下一轮，所以中间得有这一层结构化事实。每条还要打 quote_eligible 标，决定能不能引用原话。",
+    "audio": "fields-chat/3.mp3"
+  },
+  {
+    "chapter": "fields-chat",
+    "step": 4,
+    "text": "episode 比 atomic_facts 再往上聚一层——把一段对话里相关的事实合成一个「情节」，配上标题、时间范围和参与方。它存在的意义是跨日召回：一周后桌宠还能记起「你那天讨论过刺客天赋树调整」，而不是只剩零散的事实碎片。元数据卡得很紧，只留时间和参与方。",
+    "audio": "fields-chat/4.mp3"
+  },
+  {
+    "chapter": "fields-chat",
+    "step": 5,
+    "text": "emotion_signal 是给当前对话打一个情绪标签——紧张、兴奋、沮丧、平静，就这四档。本地一个轻量分类器加关键词规则就能跑出来，不上云、不存原文。它的唯一用途是决定桌宠下一句的语气：你在沮丧时它就别再开玩笑。是个派生标量，里面没有任何对话内容。",
+    "audio": "fields-chat/5.mp3"
+  },
+  {
+    "chapter": "fields-chat",
+    "step": 6,
+    "text": "quote_eligible 是挂在每条原子事实上的一个开关，决定这句话以后能不能被桌宠原话引用出来。生成事实的同时就过一道个人身份信息检测——人名、邮箱、手机号、财务关键词，命中任何一个就关掉。这是日记和高光功能的隐私安全闸，避免桌宠把敏感原句到处复述。",
+    "audio": "fields-chat/6.mp3"
+  },
+  {
+    "chapter": "fields-pc",
+    "step": 1,
+    "text": "PC 进程这块要解决的问题非常具体——桌宠什么时候该闭嘴。我们盯五个字段：当前 app 名、bundle ID、是否全屏、闲置档位、切换频率。这几个信号都是操作系统公开接口就能拿的低敏数据，足以判断你在工作、在游戏、还是已经走开。app 内容我们一行都不读。",
+    "audio": "fields-pc/1.mp3"
+  },
+  {
+    "chapter": "fields-pc",
+    "step": 2,
+    "text": "active_app.name 就是你现在前台开的是哪个 app，比如 VS Code。我们靠操作系统的进程接口直接查，每秒轮询加一遇切换立刻推送。只用来判断你「现在在游戏里」还是「在工作中」，是个实时快照——不进长期画像，第二天没人记得你昨晚开过什么。",
+    "audio": "fields-pc/2.mp3"
+  },
+  {
+    "chapter": "fields-pc",
+    "step": 3,
+    "text": "bundle_id 是 app 的唯一身份证，比如 com.microsoft.VSCode。我们要它，是因为光看名字会撞名，分类和白名单匹配必须用这个稳定 ID 才靠谱。和 active_app.name 同源，操作系统接口一起拿。仍然是实时快照，不入长期记忆。",
+    "audio": "fields-pc/3.mp3"
+  },
+  {
+    "chapter": "fields-pc",
+    "step": 4,
+    "text": "is_fullscreen 是判断你这个 app 是不是占满整个屏幕——核心用法只有一个：全屏等于闭嘴。你在打 BOSS、看电影、做演示的时候，桌宠绝不能跳出来唠嗑。靠操作系统窗口接口加屏幕分辨率比对得出，纯公开 API，没有任何额外侵入。",
+    "audio": "fields-pc/4.mp3"
+  },
+  {
+    "chapter": "fields-pc",
+    "step": 5,
+    "text": "idle_signal 是判断「你人还在不在电脑前」，分四档——正常、超 5 分钟、超 10 分钟、超 30 分钟没动作。三十秒查一次加状态变更立即推送。我们没有去监控具体输入了什么，只看键鼠静默时长。一旦判断你走了，桌宠就转待机，不再耗算力也不打扰。",
+    "audio": "fields-pc/5.mp3"
+  },
+  {
+    "chapter": "fields-pc",
+    "step": 6,
+    "text": "app_switch_burst 看的是你最近五分钟有没有在频繁切窗口——切换次数过阈值就标 true。它的用处是识别「你在抓狂找东西」或者「在赶 deadline 多线程」这种高负载状态，桌宠看到这个信号会主动让路。纯时序统计，要进画像还得另外授权。",
+    "audio": "fields-pc/6.mp3"
+  },
+  {
+    "chapter": "fields-behavior-1",
+    "step": 1,
+    "text": "行为字段上半 7 个——脱敏窗口标题、游戏全屏、界面语义标签、焦点控件、输入强度、打字节奏、鼠标 burst。这一组比 PC 进程再细一层，但隐私我们卡得最严。原则就一条：所有键盘输入只看强度不看内容，所有窗口标题脱敏后再进系统，绝对不形成键盘日志。",
+    "audio": "fields-behavior-1/1.mp3"
+  },
+  {
+    "chapter": "fields-behavior-1",
+    "step": 2,
+    "text": "window_title_redacted 是窗口标题脱敏后的版本——原标题里的文件名、路径、URL、用户名都用正则洗掉，只留 app 类别和文件类型，比如「在 IDE 编辑代码文件」。我们要这个字段，是因为光知道你在用 VS Code 不够，但又绝不能把项目名、客户名直接吞进系统。",
+    "audio": "fields-behavior-1/2.mp3"
+  },
+  {
+    "chapter": "fields-behavior-1",
+    "step": 3,
+    "text": "is_fullscreen_game 和 PC 那边的全屏判断是同一套，只是这里特别看游戏窗口。逻辑还是那条铁律——全屏等于闭嘴。你打 BOSS、看过场动画的时候桌宠绝对不该跳出来。操作系统窗口接口直接拿，没有额外采样、也没有去读窗口里的内容。",
+    "audio": "fields-behavior-1/3.mp3"
+  },
+  {
+    "chapter": "fields-behavior-1",
+    "step": 4,
+    "text": "ui_semantic_tags 是把当前界面识别成几个固定标签，比如「错误弹窗出现了」「确认按钮可见」。靠的是操作系统提供的辅助 API 加规则映射。这个字段我们卡得最严——只有白名单 app、用户单独勾选才开，缓存最长五分钟，聊天框、邮件、文档正文一律不读。",
+    "audio": "fields-behavior-1/4.mp3"
+  },
+  {
+    "chapter": "fields-behavior-1",
+    "step": 5,
+    "text": "focused_element_role 只告诉桌宠你光标现在停在什么类型的控件上——按钮、输入框、还是标题，就这一档信息。它的用处是「你正在输入」的时候桌宠别打扰。我们读控件类型，绝不读控件里的内容，所以你输入框里打的什么字，系统这一层完全不知道。",
+    "audio": "fields-behavior-1/5.mp3"
+  },
+  {
+    "chapter": "fields-behavior-1",
+    "step": 6,
+    "text": "input_intensity_level 是把你最近十秒到一分钟的键鼠事件分桶成 low / mid / high 三档，纯统计事件次数。这么做有个绝对不能让步的原因——原始按键一旦留存就是键盘日志，所以中间这一层桶化派生是硬隔离。它判断的是你在专注还是在休息，不是你打了什么。",
+    "audio": "fields-behavior-1/6.mp3"
+  },
+  {
+    "chapter": "fields-behavior-1",
+    "step": 7,
+    "text": "typing_rhythm_signal 是从输入强度往上再派生一层——steady 是稳定打字、bursty 是猛打几下停一下、sparse 是断断续续。同样从桶化数据里算出来，原始按键一个都不留。它帮桌宠区分你是在敲代码、改文档，还是只是偶尔回个消息。",
+    "audio": "fields-behavior-1/7.mp3"
+  },
+  {
+    "chapter": "fields-behavior-1",
+    "step": 8,
+    "text": "mouse_activity_burst 看的是鼠标这边有没有突然密集操作——同一套桶化派生逻辑，只统计点击和移动的频次。和键盘那两个字段一起用，能让桌宠分清你是在专注操作、还是已经停下来发呆了。原始鼠标轨迹我们不存，存了也是给自己挖坑。",
+    "audio": "fields-behavior-1/8.mp3"
+  },
+  {
+    "chapter": "fields-behavior-2",
+    "step": 1,
+    "text": "行为字段下半还是 7 个——鼠标热区、滚动强度、操作语义事件、编辑动作 burst、undo/redo 频率、输入法状态、编辑会话时长。这一组都是从上半的低敏统计里再派生一层，目的是识别更具体的工作状态。仍然不动键盘字符，仍然没有原始事件流入库。",
+    "audio": "fields-behavior-2/1.mp3"
+  },
+  {
+    "chapter": "fields-behavior-2",
+    "step": 2,
+    "text": "mouse_region_heatmap_top3 是看你鼠标这十秒一分钟集中在屏幕哪几个区域，比如中间、右上、左侧。我们只统计区域分布，不存任何鼠标坐标轨迹。它用来辅助判断专注还是休息——一直在中间敲代码 vs 在角落里乱晃，状态完全不一样。",
+    "audio": "fields-behavior-2/2.mp3"
+  },
+  {
+    "chapter": "fields-behavior-2",
+    "step": 3,
+    "text": "scroll_intensity_signal 给滚轮也分四档——none / low / mid / high。原因很简单：你在快速滚长文档和在慢慢读 PDF，状态判断要不一样。同样是十秒一分钟桶化派生，原始滚动事件不存，数值出来之后源数据就丢。",
+    "audio": "fields-behavior-2/3.mp3"
+  },
+  {
+    "chapter": "fields-behavior-2",
+    "step": 4,
+    "text": "semantic_events 是一组「明确动作」事件流——保存、撤销重做、切全屏、锁屏解锁，就这几个白名单。我们靠操作系统事件接口监听快捷键组合识别，绝不解析按了哪些字符。它给桌宠一个具体抓手：知道你刚保存了文档、刚切了 app，反应才能更精准。",
+    "audio": "fields-behavior-2/4.mp3"
+  },
+  {
+    "chapter": "fields-behavior-2",
+    "step": 5,
+    "text": "text_edit_action_burst 是从语义事件再往上聚——一分钟到五分钟内 save、undo、redo 密集出现，就标 true。这个字段告诉桌宠你正在密集编辑长文档。注意它是二阶统计，不接触字符流，只看「事件发生了几次」，比直接读编辑器内容安全得多。",
+    "audio": "fields-behavior-2/5.mp3"
+  },
+  {
+    "chapter": "fields-behavior-2",
+    "step": 6,
+    "text": "undo_redo_rate_per_min 单独把撤销和重做的频率拎出来看。我们关心这个，是因为「频繁 undo」往往意味着你在改 bug 或者卡住了——这种时候桌宠就不该来插嘴。同样是从语义事件二阶派生，每分钟一个数字而已，不知道你在撤销什么。",
+    "audio": "fields-behavior-2/6.mp3"
+  },
+  {
+    "chapter": "fields-behavior-2",
+    "step": 7,
+    "text": "ime_state 只告诉桌宠输入法当前是中文、英文、还是关着。这个字段不是内容，是状态——纯切换信号，不涉及候选词、不涉及输入字符。用处是桌宠回应可以匹配你的语言模式：你在敲英文邮件，它就别中文唠嗑过来。",
+    "audio": "fields-behavior-2/7.mp3"
+  },
+  {
+    "chapter": "fields-behavior-2",
+    "step": 8,
+    "text": "editing_session_duration_min 是当前编辑会话已经持续了多少分钟，靠语义事件的时序聚合算出来。我们要它，是为了识别长 session——你已经写了一小时，桌宠该提醒你休息了；也方便后面回顾「今天最长的一段专注是什么时候」。",
+    "audio": "fields-behavior-2/8.mp3"
+  },
+  {
+    "chapter": "fields-mcp",
+    "step": 1,
+    "text": "MCP 这块定位很特殊——它是桌宠拿外部 app 上下文的唯一通道。一共 6 个字段：app 标识、元数据摘要、任务标题、app 自生成摘要、摘要来源类型、已授权 app 列表。原则只有一条：app 主动报、用户单独授权、只接元数据和摘要，正文一律拒收。",
+    "audio": "fields-mcp/1.mp3"
+  },
+  {
+    "chapter": "fields-mcp",
+    "step": 2,
+    "text": "mcp_app_id 就是 app 自己上报的身份 ID，比如 dida365。我们靠这个区分进来的数据是哪家 app 推的。它本身不带任何用户内容，纯元数据，但所有后续的授权校验、字段解析都得先认这个 ID，所以放在第一位。",
+    "audio": "fields-mcp/2.mp3"
+  },
+  {
+    "chapter": "fields-mcp",
+    "step": 3,
+    "text": "metadata_summary 是 app 主动暴露的高度概括信息，比如「今天有 3 个待办、2 个已完成」。我们要的就是这种数量、状态、时间段层面的事实。原始任务标题、正文一概不在这层。桌宠靠这个就能做轻量提醒，不用真的去翻你的待办内容。",
+    "audio": "fields-mcp/3.mp3"
+  },
+  {
+    "chapter": "fields-mcp",
+    "step": 4,
+    "text": "task_titles 比 metadata 多一档——具体到每条任务的标题，比如「周报」「游戏日常任务」。要拿到这一层，必须用户单独给这个 app 勾过授权。哪怕授权了，我们也只读标题，正文、评论、附件全部不碰。桌宠这才能在对话里精确说出你今天有什么任务。",
+    "audio": "fields-mcp/4.mp3"
+  },
+  {
+    "chapter": "fields-mcp",
+    "step": 5,
+    "text": "app_generated_summary 是 app 自己生成的一段自然语言摘要，比如「今天主要是日常任务和一项周报」。注意是 app 自己产的，不是我们去读它的内容算出来的。它的存在是给桌宠一个能直接念出来的句子，但每条都必须带 source_type 标明来源类型，否则不收。",
+    "audio": "fields-mcp/5.mp3"
+  },
+  {
+    "chapter": "fields-mcp",
+    "step": 6,
+    "text": "summary_source_type 是上一字段的关键守门员——MCP payload 里必填。我们只认三个白名单值：任务状态摘要、公开活动摘要、平台状态摘要。聊天、邮件、会议、文档正文摘要一律拒收。这个字段就是为了堵死「app 把正文洗成摘要绕过来」这条路。",
+    "audio": "fields-mcp/6.mp3"
+  },
+  {
+    "chapter": "fields-mcp",
+    "step": 7,
+    "text": "authorized_sources 记录的是用户到底给哪些 app 开了 MCP 通道。默认是空——你不勾，桌宠就一个外部 app 都看不到。每次勾选都会写进 consent ledger 留痕，撤回之后立刻停止读取。这是 MCP 整条链路的总闸，从产品上必须做得非常显眼。",
+    "audio": "fields-mcp/7.mp3"
+  },
+  {
+    "chapter": "fields-idip",
+    "step": 1,
+    "text": "idip 是合作游戏主动报给我们的状态——你练到几级、卡在第几章、这周任务做了几个。一共 5 个字段：状态快照、状态变化、状态异常、突破点、字段语义配置。我们没有去爬游戏后端，全部是首方 SDK 推过来的，所以账号、付费、实名这些一概拿不到。",
+    "audio": "fields-idip/1.mp3"
+  },
+  {
+    "chapter": "fields-idip",
+    "step": 2,
+    "text": "idip_snapshot 是当前时点的游戏状态全景——等级、段位、周任务进度。靠首方游戏 SDK 在状态变化时推、加上周期心跳兜底。桌宠靠这个理解你「现在在哪」。强约束：只接受游戏内进度字段，账号信息、付费记录、实名信息一律不在 schema 里。",
+    "audio": "fields-idip/2.mp3"
+  },
+  {
+    "chapter": "fields-idip",
+    "step": 3,
+    "text": "idip_delta 是把上一时点的 snapshot 和新到的 snapshot 逐字段比一遍，算出「哪儿涨了哪儿掉了」。比如等级 +1、段位升一级。它存在的意义是给桌宠一个动作触发点——「你刚通关」「你刚掉段」，反应才能立刻跟上。是派生信号，不存原始 snapshot 历史。",
+    "audio": "fields-idip/3.mp3"
+  },
+  {
+    "chapter": "fields-idip",
+    "step": 4,
+    "text": "idip_anomaly 是基于 delta 和事件流再往上识别异常——同一关反复失败、关键进度长时间停滞，就标记为「卡关」。规则按游戏类型校准过，不是一刀切。桌宠看到这个信号会主动安慰，而不是泛泛地问「今天怎么样」。判定逻辑也都留版本号，方便回查。",
+    "audio": "fields-idip/4.mp3"
+  },
+  {
+    "chapter": "fields-idip",
+    "step": 5,
+    "text": "idip_milestone 是「值得庆祝的瞬间」——比如首次到达钻石、首次通关。来源有两种：游戏侧通过字段语义配置标里程碑字段、或者直接显式上报一条 milestone。我们要它单独抽出来，是为了让桌宠能主动祝贺，而不是等你说出来才意识到。",
+    "audio": "fields-idip/5.mp3"
+  },
+  {
+    "chapter": "fields-idip",
+    "step": 6,
+    "text": "idip_field_metadata 是游戏侧自己声明的一份 JSON Schema——告诉记忆系统每个字段叫什么、什么类型、单位是什么、哪些能算里程碑。这个字段非常关键，因为我们对游戏内数据的解释完全依赖它，记忆系统自己绝不去猜「level 是什么意思」。",
+    "audio": "fields-idip/6.mp3"
+  },
+  {
+    "chapter": "fields-game-event",
+    "step": 1,
+    "text": "实时事件和 idip 状态是配套的，区别在时间粒度——idip 告诉桌宠你「在哪」，实时事件告诉桌宠「刚发生了什么」。一共 8 个字段：对局开始、结束、游戏内时间、事件流、时长分级、情绪线索、回应策略、高光排序分。所有 payload 只允许游戏内字段，跟现实身份无关。",
+    "audio": "fields-game-event/1.mp3"
+  },
+  {
+    "chapter": "fields-game-event",
+    "step": 2,
+    "text": "game_session.start 就是「这一局从哪个时间点开始」。游戏 SDK 在开局瞬间推一条过来，附带 session_id。它是后面所有事件的时间锚，没有这条，事件流就没法拼回到具体哪一局。纯时间戳和会话标识，没有任何游戏内内容。",
+    "audio": "fields-game-event/2.mp3"
+  },
+  {
+    "chapter": "fields-game-event",
+    "step": 3,
+    "text": "game_session.end 对应的是结束时刻，附带胜负结果和这一局的总时长。游戏 SDK 在结算瞬间推。我们要它，是因为桌宠的赛后反应必须卡在结算之后立刻发生——隔半小时再说「恭喜」就尴尬了。和 start 一样只有元数据，不带局内细节。",
+    "audio": "fields-game-event/3.mp3"
+  },
+  {
+    "chapter": "fields-game-event",
+    "step": 4,
+    "text": "in_game_time 是游戏内的时钟，比如「游戏内第 5 日早晨 8 点」。这个字段对沉浸式游戏特别重要——桌宠的对白能贴上「你已经在游戏里熬夜了」这种感觉。但不是每款游戏都有，所以我们允许缺失，缺了的话桌宠就退回到现实时间逻辑。",
+    "audio": "fields-game-event/4.mp3"
+  },
+  {
+    "chapter": "fields-game-event",
+    "step": 5,
+    "text": "game_event.stream 是这一局里发生的具体事件流——死亡、复活、结算、目标进度。每款游戏自己声明哪些是 P0 必报事件，记忆系统负责去重和时序整理。这是桌宠即时反应的素材库：连死能安慰、突破能祝贺，全靠这条流。payload 严格限定游戏内字段。",
+    "audio": "fields-game-event/5.mp3"
+  },
+  {
+    "chapter": "fields-game-event",
+    "step": 6,
+    "text": "duration_signal 是把单局或单段时长打个标签——active、long_session、very_long_session、extended_session。阈值按游戏类型单独校准，MOBA 的「长」和开放世界的「长」不是一回事。它的核心用途是健康提示：玩太久了桌宠该主动提醒你休息。",
+    "audio": "fields-game-event/6.mp3"
+  },
+  {
+    "chapter": "fields-game-event",
+    "step": 7,
+    "text": "event_emotion_signal 是给当下的事件打一个情绪标签——开心、紧张、挫败、释然、平静、未知。AI 加规则一起推，输入是事件、idip 变化和已授权的情绪线索。注意它是游戏场景里的短期情绪锚点，不是心理诊断，更不会沉淀进画像里说你这个人怎么样。",
+    "audio": "fields-game-event/7.mp3"
+  },
+  {
+    "chapter": "fields-game-event",
+    "step": 8,
+    "text": "event_response_hint 是给桌宠的「这次该怎么接」——庆祝、安慰、教练、先问一下、还是闭嘴。规则优先加 AI 辅助，输入是情绪、事件类型和画像。它是 runtime 信号，只服务当下这一句回应，绝不会写进现实人格判断里去。",
+    "audio": "fields-game-event/8.mp3"
+  },
+  {
+    "chapter": "fields-game-event",
+    "step": 9,
+    "text": "highlight_score 是给整段情节打的高光分，0 到 1。综合五个维度：是不是里程碑、事件本身有多重要、用户有没有主动保存、情绪强度多大、稀有度高不高。它是后面高光排序和日记素材推荐的依据。每一分都要带版本号和理由数组，方便用户问「凭什么这条上榜」。",
+    "audio": "fields-game-event/9.mp3"
+  },
+  {
+    "chapter": "fields-vlm",
+    "step": 1,
+    "text": "VLM 是看屏幕画面的能力，4 个字段——单 app 开关、app 类别、场景语义标签、用户可见摘要。它能识别你这局是在打 BOSS 还是过剧情，但隐私敏感、算力贵。所以我们做了三道闸：默认关、按 app 单独开、开启时 UI 必须显示「正在看屏幕」。原图当场丢，不上传不训练。",
+    "audio": "fields-vlm/1.mp3"
+  },
+  {
+    "chapter": "fields-vlm",
+    "step": 2,
+    "text": "这个字段就是 VLM 的最外层物理开关——必须在那个具体 app 的桌宠设置里手动打开。默认是关的，而且授权粒度小到「单个 app 实例」：你在 A 游戏开了，并不意味着 B 游戏也开。我们卡这么细，是因为屏幕识别一旦泛化就回不来了。",
+    "audio": "fields-vlm/2.mp3"
+  },
+  {
+    "chapter": "fields-vlm",
+    "step": 3,
+    "text": "app_category 标识当前授权的 app 属于哪一类——目前只支持 game。其他类别比如办公软件、浏览器，我们故意没开。原因是 VLM 的场景理解能力还没强到能在所有界面都安全使用，先在游戏窗口跑通、再考虑下一类，不一次性放出去。",
+    "audio": "fields-vlm/3.mp3"
+  },
+  {
+    "chapter": "fields-vlm",
+    "step": 4,
+    "text": "semantic_tags 是 VLM 输出的场景标签，比如 boss_fight、low_hp、scene_funny。每次最多 5 个，全部必须落在我们预定义的枚举表里。视觉帧用完即扔，缓存最多 60 秒。重点是不允许自由文本扩写——一旦让模型自由写，原画面里的字幕、人脸都可能漏出去。",
+    "audio": "fields-vlm/4.mp3"
+  },
+  {
+    "chapter": "fields-vlm",
+    "step": 5,
+    "text": "user_visible_summary 是一句给用户看的描述，比如「BOSS 战残血，紧张时刻」，硬限制 50 字以内。强约束写在 prompt 里——不允许输出账号、聊天内容、字幕原文、他人信息。它的存在是为了让用户随时知道「桌宠看到了什么」，没有这一行，VLM 就是个黑盒。",
+    "audio": "fields-vlm/5.mp3"
+  },
+  {
+    "chapter": "fields-context",
+    "step": 1,
+    "text": "current_context 这张表是桌宠每次开口前都要查一遍的「现场快照」。我们设计了 7 个字段，把活动主题、情绪、能不能打扰、注意力、置信度、推送原因、来源掩码全压成派生标量。原始聊天和画面一律不落进来，桌宠只读切面，不读底层。",
+    "audio": "fields-context/1.mp3"
+  },
+  {
+    "chapter": "fields-context",
+    "step": 2,
+    "text": "activity_topic 解决的是「桌宠该聊什么」。比如你在打 BOSS 战，它就不会突然跟你聊午饭。规则先判断，已知 app 加标题模式直接命中；规则搞不定才让大模型补一句话级别的判断。结构化状态一变就推，平时靠心跳保活。",
+    "audio": "fields-context/2.mp3"
+  },
+  {
+    "chapter": "fields-context",
+    "step": 3,
+    "text": "mood_estimate 是桌宠的回应风格开关——你紧张它就少说话，沮丧它换温柔语气。值就 5 档：紧张、平静、兴奋、沮丧、unknown。规则滑窗加 AI 一起推，信号不够直接给 unknown，宁可不判，也不冒充心理医生做诊断。",
+    "audio": "fields-context/3.mp3"
+  },
+  {
+    "chapter": "fields-context",
+    "step": 4,
+    "text": "interrupt_suitability 是个派生标量，目的就一个——桌宠不许自己判断「现在能不能打扰」，必须读这条。我们把全屏、空闲、打字节奏、game_event 密度、勿扰边界加权出 high / medium / low，跨级一变立刻推送。",
+    "audio": "fields-context/4.mp3"
+  },
+  {
+    "chapter": "fields-context",
+    "step": 5,
+    "text": "attention_target 告诉桌宠你的眼睛在哪边屏幕上，它好决定从左边还是右边冒出来。靠 active_app 加清洗后的窗口标题加 app 分类规则映射，输出游戏、IDE、视频这种粗类。标题里的文件名、用户名先脱敏才进来，桌宠只看抽象类目。",
+    "audio": "fields-context/5.mp3"
+  },
+  {
+    "chapter": "fields-context",
+    "step": 6,
+    "text": "confidence 是「这张快照本身靠不靠谱」。算法很朴素——滑窗里有多少条有效信号，低于阈值就标低置信，桌宠这时候默认保守、不主动撩人。我们要的就是这种自我怀疑，避免信号断档时它还在自信地输出错误判断。",
+    "audio": "fields-context/6.mp3"
+  },
+  {
+    "chapter": "fields-context",
+    "step": 7,
+    "text": "trigger 是这次推送被什么触发——activity_topic_change、mood_change、interrupt_change、heartbeat 四选一。看起来不起眼，但它是审计的关键：用户问「桌宠为什么这时候开口」，我们能反查是状态变了还是心跳到了。",
+    "audio": "fields-context/7.mp3"
+  },
+  {
+    "chapter": "fields-context",
+    "step": 8,
+    "text": "source_mask 这条字段存在的意义就是「凭证」——这次判断用了哪些数据源，chat_realtime、behavior_runtime、vlm、mcp、game_event 各自有没有开。授权一变它就跟着裁剪。用户问「你凭什么这么判断」，桌宠掀开这张掩码就能答清楚。",
+    "audio": "fields-context/8.mp3"
+  },
+  {
+    "chapter": "profile-meta",
+    "step": 1,
+    "text": "每条画像字段后面都拖着一份元字段。设计这个的核心目的就一个——让每条画像都能被解释、被反查、被用户质疑。4 个核心字段：置信度告诉桌宠该不该说出来、来源域记录数据从哪来、生成方式说明谁写的、证据 ID 把所有上游记录全串起来。",
+    "audio": "profile-meta/1.mp3"
+  },
+  {
+    "chapter": "profile-meta",
+    "step": 2,
+    "text": "第一个是置信度，0 到 1 之间的一个分数。不是「用户人格分」，而是桌宠该不该放心引用这条记忆的安全阀。我们切成 4 档：高位可以自然引用，中位弱表达不要说死，低位不主动下结论先问用户，最低档直接不用，必要时触发重新总结。",
+    "audio": "profile-meta/2.mp3"
+  },
+  {
+    "chapter": "profile-meta",
+    "step": 3,
+    "text": "第二个是证据来源域，记录这条画像基于什么数据写出来。9 个枚举：用户输入、聊天、游戏事件、idip 状态、行为信号、MCP、VLM、高光、系统。可以是单值，也可以多个来源并列。设计它的目的，是让用户在偏好页能反查「为什么桌宠知道我这事」。",
+    "audio": "profile-meta/3.mp3"
+  },
+  {
+    "chapter": "profile-meta",
+    "step": 4,
+    "text": "第三个是生成方式，3 个枚举——user_set 是你自己设的、system_record 是系统直接记下来的、inferred 是基于证据推断出来的。我们专门把它和来源域分开，原因是「数据从哪来」和「字段谁写的」是两个独立维度，混在一起就讲不清责任。",
+    "audio": "profile-meta/4.mp3"
+  },
+  {
+    "chapter": "profile-meta",
+    "step": 5,
+    "text": "第四个是证据 ID 数组，把支持这条画像的上游记录全列出来——游戏事件 ID、聊天情节 ID、高光 ID 都行。规则很死：所有 AI 推断或规则推断出来的字段必须带证据 ID，用户主动设的可以为空。它只记 ID 不存原文，但能反查到任何一条记忆。",
+    "audio": "profile-meta/5.mp3"
+  },
+  {
+    "chapter": "fields-meta-detail",
+    "step": 1,
+    "text": "这一节看的是 profile_meta 剩下的 8 个生命周期字段。核心是回答两件事——这条画像是怎么活的、它什么时候算死。证据短解释、时间戳、is_active 开关、失效原因、衰减分、用户反馈，全都是为了让画像可解释、可回滚、能被用户更正。",
+    "audio": "fields-meta-detail/1.mp3"
+  },
+  {
+    "chapter": "fields-meta-detail",
+    "step": 2,
+    "text": "evidence_summary 这个字段存在的意义，是把一堆 evidence_id 翻译成一句人能看懂的话。比如桌宠说你喜欢稳健发育，你点开就看到「最近 5 局多次选择稳健发育路线」。但有条死线——这句话只能复述 evidence 里有的事实，不许引入新东西。",
+    "audio": "fields-meta-detail/2.mp3"
+  },
+  {
+    "chapter": "fields-meta-detail",
+    "step": 3,
+    "text": "first_seen_at 是这条画像第一次被写下来的时间。它本身没什么花活，就是一个系统戳。但下游的时效衰减全靠它做起点——一条画像从这一刻开始计算「还新不新」、桌宠要不要再次确认它。",
+    "audio": "fields-meta-detail/3.mp3"
+  },
+  {
+    "chapter": "fields-meta-detail",
+    "step": 4,
+    "text": "last_confirmed_at 是「最近一次还得到佐证」的时间。用户在偏好页改过、桌宠夸完你点赞、新行为又跑出同样的信号——这三种情况都更新它。它是衰减算法的基准时间，一直被验证的画像就不容易过期。",
+    "audio": "fields-meta-detail/4.mp3"
+  },
+  {
+    "chapter": "fields-meta-detail",
+    "step": 5,
+    "text": "is_active 是这条画像还能不能用的硬开关。true 才允许进对话、进展示、进复盘；false 我们也不真删，留着是为了避免桌宠下次又总结出同样错的结论。换句话说，false 是「记得它错过」，不是「忘了它」。",
+    "audio": "fields-meta-detail/5.mp3"
+  },
+  {
+    "chapter": "fields-meta-detail",
+    "step": 6,
+    "text": "inactive_reason 就一个用途——告诉用户「这条为什么挂了」。5 个枚举：你主动删了、你否定了、你换了新版本、过期了、和更新的证据冲突。只在 is_active=false 的时候才填，平时为空。这是审计和反诉的根。",
+    "audio": "fields-meta-detail/6.mp3"
+  },
+  {
+    "chapter": "fields-meta-detail",
+    "step": 7,
+    "text": "inactive_at 记的是 is_active 从 true 翻到 false 的那一刻。看起来跟普通时间戳一样，但它是排查必备——半年后用户问「我那条评价是什么时候不见的」，我们靠这个能精确答出来。",
+    "audio": "fields-meta-detail/7.mp3"
+  },
+  {
+    "chapter": "fields-meta-detail",
+    "step": 8,
+    "text": "decay_score 是衰减后的分数，规则按 last_confirmed_at 派生，桌宠不用自己算。关键是这条字段允许我们做一件事——一条画像太久没被验证、分数低到阈值，系统就把它标成 is_active=false、原因写 expired，自动退场。",
+    "audio": "fields-meta-detail/8.mp3"
+  },
+  {
+    "chapter": "fields-meta-detail",
+    "step": 9,
+    "text": "user_feedback 是用户对一条具体画像的态度记录，按钮点踩、口头说不对、直接改写都进来。同一个 target 取最新的那条算数。它不会马上覆盖画像，而是反哺权重——多次负向累积，就能触发把这条 is_active 翻成 false。",
+    "audio": "fields-meta-detail/9.mp3"
+  },
+  {
+    "chapter": "profile-structure",
+    "step": 1,
+    "text": "用户画像我们没做成一个大对象，而是切成 7 个子对象——身份、桌宠关系、游戏偏好、玩法风格、陪伴偏好、进度、社交。原因是不同子对象的写入规则差别很大：有的只能用户改、有的允许 AI 推断、有的允许混合。先看整体，再一个一个讲。",
+    "audio": "profile-structure/1.mp3"
+  },
+  {
+    "chapter": "profile-structure",
+    "step": 2,
+    "text": "第一个是基础昵称——你想被桌宠叫成什么。我们只存两个字段：UI 上的展示名，和你希望桌宠当面叫你的称呼，比如「队长」。这块完全由用户自己填，AI 一行都不能写。原因是称呼这事一旦出错，桌宠所有对话都会跑偏，必须把它锁死。",
+    "audio": "profile-structure/2.mp3"
+  },
+  {
+    "chapter": "profile-structure",
+    "step": 3,
+    "text": "第二个是桌宠关系——你希望它扮演什么角色。我们提供 4 种枚举：朋友、损友、助手、安静陪伴。这是用户直接选的，AI 只读不能改。我们也没把桌宠口癖、毒舌程度这种语气设定放进画像，那些是游戏 IP 自己的固定设定，用户也不改。",
+    "audio": "profile-structure/3.mp3"
+  },
+  {
+    "chapter": "profile-structure",
+    "step": 4,
+    "text": "第三个是游戏偏好——你喜欢什么角色、什么模式、当前的游戏目标。这块用户可以直接编辑，AI 也能基于你的聊天和游戏事件做推断补充，比如「最近一直选法师」就写成一条 inferred 项。但只要你改过这个字段，AI 就再也不能覆盖你设的值。",
+    "audio": "profile-structure/4.mp3"
+  },
+  {
+    "chapter": "profile-structure",
+    "step": 5,
+    "text": "第四个是玩法风格——稳健发育、团队支援、目标优先这种标签。这块主要靠 AI 加规则混合推断，输入是聊天、合作游戏事件、还有那条 idip 状态数据。但有条硬规则：只能描述游戏内行为，绝对不能上升到现实人格，不会出现「控制欲强」这种东西。",
+    "audio": "profile-structure/5.mp3"
+  },
+  {
+    "chapter": "profile-structure",
+    "step": 6,
+    "text": "第五个是陪伴偏好——情绪上想被安慰还是被直接复盘、什么时候不要打扰、喜欢聊什么话题、雷点是什么。这块用户设置永远优先，AI 只在话题这个维度做推断补充。原因是陪伴方式跟用户当下状态强相关，桌宠绝对不能自己猜。",
+    "audio": "profile-structure/6.mp3"
+  },
+  {
+    "chapter": "profile-structure",
+    "step": 7,
+    "text": "第六个是进度成就——你最近的目标是什么、卡在哪、刚成就了什么、长期里程碑有哪些。这块主要由合作游戏推过来的事件填充，桌宠靠这些知道你忙什么。用户随时能删、能更正——比如某个「卡点」你已经过了，可以让它消失。",
+    "audio": "profile-structure/7.mp3"
+  },
+  {
+    "chapter": "profile-structure",
+    "step": 8,
+    "text": "第七个是社交偏好——单人、双排、车队还是混合。这块用户可以直接设，AI 也能基于聊天和游戏事件做低置信推断。但有条硬约束：绝对不记录队友的个人信息，队友 ID、聊天内容、个人标签一概不写进你的画像。社交这块只描述你自己。",
+    "audio": "profile-structure/8.mp3"
+  },
+  {
+    "chapter": "profile-meta-detail",
+    "step": 1,
+    "text": "AI 在用户画像上能写什么、不能写什么，我们专门做了一张权限矩阵，分 6 类字段。规则核心是一条——用户改过的字段，AI 永远不能再覆盖。先看整体：用户直接定义、IP 固定只读、用户明确偏好、游戏内推断、总结字段、还有最后一条死禁。",
+    "audio": "profile-meta-detail/1.mp3"
+  },
+  {
+    "chapter": "profile-meta-detail",
+    "step": 2,
+    "text": "第一类是用户直接定义的字段——展示名、想被叫的称呼、桌宠关系、情绪陪伴偏好、打扰边界。这些 AI 只读，一个字都不能写。原因很直白：这是用户自己在画像页填进来的硬偏好，AI 自动覆盖会让用户感到被冒犯，整个产品信任就崩。",
+    "audio": "profile-meta-detail/2.mp3"
+  },
+  {
+    "chapter": "profile-meta-detail",
+    "step": 3,
+    "text": "第二类是 IP 固定只读字段——桌宠的称呼风格、语气偏好、口癖、毒舌程度、温柔程度、直率程度。这些是游戏 IP 自己 runtime 配置注入的，AI 只能遵守，用户也改不了。我们把这块隔在画像之外，原因是 IP 角色设定属于产品形象，跟用户画像是两件事。",
+    "audio": "profile-meta-detail/3.mp3"
+  },
+  {
+    "chapter": "profile-meta-detail",
+    "step": 4,
+    "text": "第三类是用户明确偏好字段——想聊什么话题、不想聊什么、当前游戏目标。这些用户能直接改，AI 也允许写 inferred 项做推断补充，但每条都要带证据 ID、来源域、生成方式、置信度。最关键的一条：用户改过的值，AI 不能再覆盖。",
+    "audio": "profile-meta-detail/4.mp3"
+  },
+  {
+    "chapter": "profile-meta-detail",
+    "step": 5,
+    "text": "第四类是游戏内推断字段——玩法风格标签、风险偏好、当前卡点、社交偏好。这些 AI 可以基于聊天、合作游戏事件、idip 状态、用户反馈生成，但必须带证据。用户随时可以编辑、删除、或者对桌宠说「这不像我」「这不准」，被否定的字段会直接失效。",
+    "audio": "profile-meta-detail/5.mp3"
+  },
+  {
+    "chapter": "profile-meta-detail",
+    "step": 6,
+    "text": "第五类是总结字段——那条一句话画像摘要，比如「偏好法师与稳健发育，最近在练排位节奏」。AI 推断画像项授权开着的时候，这条可以自动重写；一旦关闭，自动重写就停。唯一例外是用户主动点「重新总结我」，那时候才允许 AI 重算一遍。",
+    "audio": "profile-meta-detail/6.mp3"
+  },
+  {
+    "chapter": "profile-meta-detail",
+    "step": 7,
+    "text": "第六类是死禁——现实身份、年龄、性别、住址、职业、健康、心理诊断、政治宗教、性取向、消费能力、队友个人信息、还有任何羞辱性标签。这些都不许 AI 推断、不许写进画像、也不出现在测定结果里。这是和早先 5 条红线对齐的硬边界。",
+    "audio": "profile-meta-detail/7.mp3"
+  },
+  {
+    "chapter": "fields-highlight-1",
+    "step": 1,
+    "text": "高光是桌宠主动给你存的「值得记住的瞬间」，我们把字段拆成上下两半。上半 7 个管「这件事是什么」——ID、标题、时间、场景、摘要、分类、标签。AI 先出一份草稿，但只有你保存或者编辑那一刻，它才正式落库。",
+    "audio": "fields-highlight-1/1.mp3"
+  },
+  {
+    "chapter": "fields-highlight-1",
+    "step": 2,
+    "text": "highlight_id 是这条高光的身份证。看着只是 UUID，但它的关键时刻是「触发命中」——只有 idip 里程碑、episode 高光打分、用户主动点星，这三种触发条件之一命中了，系统才发 ID，避免桌宠随便生成一堆。",
+    "audio": "fields-highlight-1/2.mp3"
+  },
+  {
+    "chapter": "fields-highlight-1",
+    "step": 3,
+    "text": "title 这个字段的取舍是——AI 先给建议，用户说了算。AI 看着 episode 加里程碑写一个不超过 20 字的草稿，比如「首次单杀王者打野」。但只要你编辑过一次，这条就标成 user_set，AI 之后再也不许覆盖你的版本。",
+    "audio": "fields-highlight-1/3.mp3"
+  },
+  {
+    "chapter": "fields-highlight-1",
+    "step": 4,
+    "text": "time 直接复用上游的时间戳，不让桌宠自己造。三种来源——idip 里程碑触发的时间、episode 时间段的结束点、用户点星那一刻。这样下游做时间轴时，高光和原始事件能精准对齐，不会因为四舍五入错位。",
+    "audio": "fields-highlight-1/4.mp3"
+  },
+  {
+    "chapter": "fields-highlight-1",
+    "step": 5,
+    "text": "scene 是给用户看「这事发生在哪儿」——比如王者荣耀 河道遭遇战。AI 合成时吃三类输入：active_app、清洗过的窗口标题、VLM 启用时的语义标签。但有一条死线——任何个人身份信息都不许漏进 scene 文本里。",
+    "audio": "fields-highlight-1/5.mp3"
+  },
+  {
+    "chapter": "fields-highlight-1",
+    "step": 6,
+    "text": "event_summary 是这条高光的「正文」，不超过 80 字。AI 用 episode、game_event、idip_milestone 三股输入合一段话。但只要引用了用户原话，那条原话必须 quote_eligible=true 才行。你改完之后 AI 同样不再覆盖。",
+    "audio": "fields-highlight-1/6.mp3"
+  },
+  {
+    "chapter": "fields-highlight-1",
+    "step": 7,
+    "text": "category 这个字段强约束 6 个枚举：成就、成长、情绪、社交、收藏、关系。我们故意不让 AI 自由发挥写文本——理由很现实：自由文本不能聚合、不能筛选、用户也没法稳定预期。schema 卡死，AI 必须落在 6 个里头选。",
+    "audio": "fields-highlight-1/7.mp3"
+  },
+  {
+    "chapter": "fields-highlight-1",
+    "step": 8,
+    "text": "tags 是给检索用的自由标签，最多 5 条、要去重，比如反蹲、单杀、首次。AI 生成建议、用户可以改，改完覆盖。这里我们也做了一道脱敏闸——昵称、ID、真名这类个人身份信息一律不许出现在标签里。",
+    "audio": "fields-highlight-1/8.mp3"
+  },
+  {
+    "chapter": "fields-highlight-2",
+    "step": 1,
+    "text": "高光下半 7 个字段管的是「这条高光怎么活、怎么共享、怎么死」——触发来源、隐私级别、置顶、证据 ID、is_active 和它的两个伴生字段。所有数据对象都用同一套生命周期约定，高光只是其中一个落地。",
+    "audio": "fields-highlight-2/1.mp3"
+  },
+  {
+    "chapter": "fields-highlight-2",
+    "step": 2,
+    "text": "source 记的是这条高光是被什么触发出来的——idip 里程碑、episode 打分到阈值、或者用户主动点星，三选一。这里我们故意排除了一个来源：角色相似度结果不许生成高光，否则就成了「桌宠用相似度证明自己相似度」的自证循环。",
+    "audio": "fields-highlight-2/2.mp3"
+  },
+  {
+    "chapter": "fields-highlight-2",
+    "step": 3,
+    "text": "privacy_level 只有两档——private 和 shareable。新生成的高光默认就是 private，只有用户主动点了分享按钮，才会派生出一份 shareable 副本。private 那份永远不进分享卡片，这是我们对「不会意外晒出去」的兜底承诺。",
+    "audio": "fields-highlight-2/3.mp3"
+  },
+  {
+    "chapter": "fields-highlight-2",
+    "step": 4,
+    "text": "pinned 是个朴素的布尔，但它必须由用户在偏好设置页的 UI 上手动操作，AI 一行代码都碰不到。原因是「置顶」对用户来说是带情感重量的——值得记一辈子的那种瞬间，由 AI 自动判断的话很容易翻车。",
+    "audio": "fields-highlight-2/4.mp3"
+  },
+  {
+    "chapter": "fields-highlight-2",
+    "step": 5,
+    "text": "evidence_ids 是这条高光指向哪些底层证据——game_event_xx、idip_milestone_xx 这类 ID 数组。系统直接把上游 ID 写进来，不复制原文。后面分享卡片、复盘、甚至角色相似度的解释，全靠这数组反查实证，断了就成了空话。",
+    "audio": "fields-highlight-2/5.mp3"
+  },
+  {
+    "chapter": "fields-highlight-2",
+    "step": 6,
+    "text": "is_active 默认 true，用户删了、否定了、替换了，就翻成 false。和别的对象一样——false 之后不展示、不引用、也不能再当角色相似度的证据。我们不真删数据，是为了下次 AI 别再总结出同样错的高光。",
+    "audio": "fields-highlight-2/6.mp3"
+  },
+  {
+    "chapter": "fields-highlight-2",
+    "step": 7,
+    "text": "inactive_reason 跟 profile_meta 一套枚举：user_deleted、user_rejected、user_replaced、expired、conflict_with_newer_evidence。只有 is_active=false 的时候才填。所有「为什么挂了」的解释都得回到这五个标签上。",
+    "audio": "fields-highlight-2/7.mp3"
+  },
+  {
+    "chapter": "fields-highlight-2",
+    "step": 8,
+    "text": "inactive_at 写的是这条高光被删除、否定、替换或者过期的那个时刻。系统戳，但它支撑两件事——一是用户要恢复的时候我们能精确还原顺序，二是用户问「这条什么时候不见的」时我们能直接答出来。",
+    "audio": "fields-highlight-2/8.mp3"
+  },
+  {
+    "chapter": "fields-prefs-1",
+    "step": 1,
+    "text": "user_preferences 是整套系统的控制台，字段太多我们拆上下半看。上半 10 个：内容类型 3 项、日记风格 4 项、隐私授权前 3 项。这一节核心原则只有一条——AI 永远不能自己改这里，任何写入都必须用户在 UI 上勾过。",
+    "audio": "fields-prefs-1/1.mp3"
+  },
+  {
+    "chapter": "fields-prefs-1",
+    "step": 2,
+    "text": "content_type.enabled 是用户勾选启用了哪些生成内容——轻反思、情感陪伴、日记之类，从 8 个枚举里选。这条只能在偏好页 UI 上主动勾选。哪怕 AI 觉得「你应该会喜欢日记」，也不许悄悄打开，必须用户自己点。",
+    "audio": "fields-prefs-1/2.mp3"
+  },
+  {
+    "chapter": "fields-prefs-1",
+    "step": 3,
+    "text": "content_type.priority 是用户拖拽出来的优先级排序。为什么需要——因为有几个内容类型同时想冒出来时，桌宠总得知道谁先说。规则简单：拖拽决定顺序，AI 不许动。多内容竞争时按这条数组从上往下走。",
+    "audio": "fields-prefs-1/3.mp3"
+  },
+  {
+    "chapter": "fields-prefs-1",
+    "step": 4,
+    "text": "content_type.user_feedback 不会直接把内容类型关掉，它只记反馈事件——点赞、点踩、口头说不喜欢，按 target 累计。我们故意拆开「开关」和「反馈」：开关只听用户显式操作，反馈只做权重学习，避免一次手滑误把内容类型关掉。",
+    "audio": "fields-prefs-1/4.mp3"
+  },
+  {
+    "chapter": "fields-prefs-1",
+    "step": 5,
+    "text": "diary_style.frequency 是日记多久写一次——daily、weekly、event_driven、off 四选一。偏好页 UI 写入。这里我们卡得特别死：AI 严禁自动修改日记频率，因为日记是有情感重量的产出，节奏被 AI 改一次，信任就崩了。",
+    "audio": "fields-prefs-1/5.mp3"
+  },
+  {
+    "chapter": "fields-prefs-1",
+    "step": 6,
+    "text": "diary_style.length 是日记长度偏好——short、medium、long。也是用户主动选。看起来鸡毛蒜皮，但它直接决定 AI 生成模板的字数预算，差一个档位用户读起来体感差异就很大。",
+    "audio": "fields-prefs-1/6.mp3"
+  },
+  {
+    "chapter": "fields-prefs-1",
+    "step": 7,
+    "text": "diary_style.focus 是日记重点——events、emotion、growth、mixed。你想要流水账型、情绪复盘型还是成长记录型，自己选。这条决定 AI 抓哪一类材料拼日记。AI 写不出 mixed 时只许降级到默认，绝不许改这条。",
+    "audio": "fields-prefs-1/7.mp3"
+  },
+  {
+    "chapter": "fields-prefs-1",
+    "step": 8,
+    "text": "quote_user_original 是「日记里能不能引用我说过的原话」。这条要生效，必须两个条件同时满足——privacy_grants.diary_quote 给了授权，并且对应原话本身被标了 quote_eligible=true。少一个 AI 就只能转述。",
+    "audio": "fields-prefs-1/8.mp3"
+  },
+  {
+    "chapter": "fields-prefs-1",
+    "step": 9,
+    "text": "privacy_grants.chat_content 决定首方对话能不能进长期画像，这是 P0 里的 P0。结构是 granted / granted_at / revoked_at 三元组——授没授、什么时候授的、什么时候撤的，都留账。默认 false，AI 一辈子不许自己翻这个开关。",
+    "audio": "fields-prefs-1/9.mp3"
+  },
+  {
+    "chapter": "fields-prefs-1",
+    "step": 10,
+    "text": "game_event_memory 是「游戏事件能不能进长期画像」。我们故意把它和实时反应拆开——桌宠当下安慰你「连死了别气」不需要授权，但要把这事沉淀到「这个用户抗压差」的长期画像，必须用户勾过。默认 false。",
+    "audio": "fields-prefs-1/10.mp3"
+  },
+  {
+    "chapter": "fields-prefs-1",
+    "step": 11,
+    "text": "behavior_data 是低敏行为信号——打字节奏、鼠标活跃度这类——能不能进画像。它的作用是辅助打扰判断和玩法风格推断，不读内容只读节奏。但默认还是 false，理由很简单：没勾过的开关一律按关处理，没有「合理推定」。",
+    "audio": "fields-prefs-1/11.mp3"
+  },
+  {
+    "chapter": "fields-prefs-2",
+    "step": 1,
+    "text": "用户偏好下半 11 个字段：隐私授权剩余 7 项、删除策略 2 项、记忆控制 2 项。这一节最重的是「以后别这样记」这种用户更正规则——它直接锁住 AI 的推断行为，是我们和用户之间最硬的契约。",
+    "audio": "fields-prefs-2/1.mp3"
+  },
+  {
+    "chapter": "fields-prefs-2",
+    "step": 2,
+    "text": "vlm_visual 是当前窗口画面理解的授权，按 app 单独勾。默认关，原因是它隐私敏感、算力贵。开了之后产品内大模型可以处理画面，但有三道死线——不存原图、不进训练、不留帧日志。授权窗口外加短期 buffer 用完就丢。",
+    "audio": "fields-prefs-2/2.mp3"
+  },
+  {
+    "chapter": "fields-prefs-2",
+    "step": 3,
+    "text": "ui_text_reading 是界面文字读取授权，也是按 app 勾。区别在于它只读按钮、弹窗、游戏提示这种界面元素，永远不读聊天框、邮件正文、密码框。说白了——它认的是「控件」，不认「内容」。默认关。",
+    "audio": "fields-prefs-2/3.mp3"
+  },
+  {
+    "chapter": "fields-prefs-2",
+    "step": 4,
+    "text": "system_audio_music_context 是音频氛围授权，扩展级。允许的事情很窄——识别背景音乐和环境氛围这种语义。不许做的事很多——不留原始音频、不做人声转写、绝对不采集通话。我们宁可少一类信号，也不碰隐私边界。",
+    "audio": "fields-prefs-2/4.mp3"
+  },
+  {
+    "chapter": "fields-prefs-2",
+    "step": 5,
+    "text": "mcp_sources 是 MCP 那些外部 app 的授权列表。和细粒度授权相反，这里我们刻意做粗——用户只勾「Steam 接还是不接」，不让用户挨个字段勾。原因是字段级太繁琐用户根本不会用，授权 app 的字段白名单我们这边定。",
+    "audio": "fields-prefs-2/5.mp3"
+  },
+  {
+    "chapter": "fields-prefs-2",
+    "step": 6,
+    "text": "profile_inference 是 AI 推断画像项的总闸——允不允许大模型基于授权数据写「这个用户大概是…」这种推断行。关闭后两件事立刻停：一是不许新增 AI 推断项，二是 summary 自动重写也停下。可以暂停，不是死路。",
+    "audio": "fields-prefs-2/6.mp3"
+  },
+  {
+    "chapter": "fields-prefs-2",
+    "step": 7,
+    "text": "character_similarity_assessment 是角色相似度测定的开关，比别的都严——不是开了就一直能测，每次测定都要用户主动触发并同意一次。系统从不在后台周期性地跑这个。默认 false，整个角色相似度章节的入口就在这。",
+    "audio": "fields-prefs-2/7.mp3"
+  },
+  {
+    "chapter": "fields-prefs-2",
+    "step": 8,
+    "text": "diary_quote 是「日记和分享里能不能贴用户原话」。默认 false。哪怕开了也不是想引就引——对应那段原话本身得 quote_eligible=true 才能被引出来，等于两把锁串联，少一把就只能用 AI 转述。",
+    "audio": "fields-prefs-2/8.mp3"
+  },
+  {
+    "chapter": "fields-prefs-2",
+    "step": 9,
+    "text": "delete_on_revoke 解决一个争议——用户撤回授权时，已经存的历史要不要一起删？我们不替用户决定，给两个选项：ask 撤回时弹确认，delete_now 直接删。核心思路是把「撤授权」和「删历史」拆成两件事，让用户自己选。",
+    "audio": "fields-prefs-2/9.mp3"
+  },
+  {
+    "chapter": "fields-prefs-2",
+    "step": 10,
+    "text": "profile_reset_at 是用户点「清空画像」的时间戳。看着只是个时间，但它是一道死线——这一刻之后，AI 不许再用这之前的旧画像数据生成任何内容。等于在长期记忆上画了一刀，过去归过去，未来归未来。",
+    "audio": "fields-prefs-2/10.mp3"
+  },
+  {
+    "chapter": "fields-prefs-2",
+    "step": 11,
+    "text": "resummarize_requested_at 记的是用户主动喊「重新总结我」的那一刻。可以在偏好页点按钮，也可以直接对桌宠说。我们卡死了一条——只能用户触发，AI 自己不许偷偷重总结，否则用户感觉「我画像怎么变了」就崩了。",
+    "audio": "fields-prefs-2/11.mp3"
+  },
+  {
+    "chapter": "fields-prefs-2",
+    "step": 12,
+    "text": "do_not_remember_rules 是用户的更正规则，比如「不要根据一次连败总结我心态差」。可以在 UI 上编辑，也可以直接跟桌宠说一句。一旦写进来，AI 后续做推断画像项必须避开这条规则，用户更正永远压在 AI 之上。",
+    "audio": "fields-prefs-2/12.mp3"
+  },
+  {
+    "chapter": "character",
+    "step": 1,
+    "text": "角色相似度测定，我们没让 AI 自由发挥，而是固定 6 个维度去比对——玩法、目标、成长、情绪、社交、内容。原因是测定结果不能模糊。UI 上展示的也不是「你 82% 像 TA」，而是「你在这几个特点上像 TA、在那几个特点上不像」。先看整体。",
+    "audio": "character/1.mp3"
+  },
+  {
+    "chapter": "character",
+    "step": 2,
+    "text": "第一个维度是玩法风格——你怎么玩游戏。证据来自玩法子画像、合作游戏事件、idip 状态变化、还有保存的高光。判定策略是规则优先、AI judge 兜底。意思是有结构化信号就先按规则判，遇到文本类或者证据冲突的，才让 AI 出来兜底。",
+    "audio": "character/2.mp3"
+  },
+  {
+    "chapter": "character",
+    "step": 3,
+    "text": "第二个维度是游戏目标——你最近在追什么。证据来自游戏偏好里的 game_goals、进度子画像里的当前目标、还有合作游戏推过来的里程碑。这块判定纯规则优先，原因是「追什么」本身就是结构化字段，不需要 AI 自由发挥。",
+    "audio": "character/3.mp3"
+  },
+  {
+    "chapter": "character",
+    "step": 4,
+    "text": "第三个维度是成长路径——你怎么推进、怎么卡关、怎么突破。证据来自进度子画像、合作游戏里程碑、还有保存的高光。也是规则优先，因为推进路径本身就是一条事件链，规则比 AI 判得更稳。AI 在这个维度基本不参与。",
+    "audio": "character/4.mp3"
+  },
+  {
+    "chapter": "character",
+    "step": 5,
+    "text": "第四个维度是情绪反应——输赢、失败、压力之下你想怎么被对待。证据来自陪伴子画像、聊天情节、原子事实、还有用户反馈。这块策略是 AI judge with rules——情绪信号不像数值那么硬，主要靠 AI 综合判，规则只做安全兜底。",
+    "audio": "character/5.mp3"
+  },
+  {
+    "chapter": "character",
+    "step": 6,
+    "text": "第五个维度是社交方式——你倾向单人、组队、协作、还是分享。证据来自社交子画像和组队类的游戏事件。策略是规则加 AI judge。先看你 social_preference 是怎么设的，再结合实际的组队事件做综合判定，单边证据不下结论。",
+    "audio": "character/6.mp3"
+  },
+  {
+    "chapter": "character",
+    "step": 7,
+    "text": "第六个维度是内容偏好——你希望桌宠聊什么、记什么。证据来自用户偏好设置和陪伴子画像。判定策略是规则优先。意思是这块基本就是看你勾选的话题白名单和黑名单，不需要 AI 自由解读。它跟角色匹不匹配，规则就能说清楚。",
+    "audio": "character/7.mp3"
+  },
+  {
+    "chapter": "character-judgment",
+    "step": 1,
+    "text": "每个维度判完会落到 5 个状态——matched、not_matched、uncertain、insufficient_evidence、not_authorized。这套分层就为一件事：把「证据够但不像」和「证据不够不知道」分开。后三种不进总分，避免数据少被判成不像 TA。",
+    "audio": "character-judgment/1.mp3"
+  },
+  {
+    "chapter": "character-judgment",
+    "step": 2,
+    "text": "第一个是 matched——证据足够，并且满足角色 trait 的要求。这种维度按 match_score 等于 1 进总分。UI 上会展示给用户看，比如「你像 TA 的地方在这里」。但每条 matched 必须基于具体的 evidence_ids，AI 不许凭空生成新事实。",
+    "audio": "character-judgment/2.mp3"
+  },
+  {
+    "chapter": "character-judgment",
+    "step": 3,
+    "text": "第二个是 not_matched——证据足够，但不满足要求，或者命中了反向信号。按 match_score 等于 0 进总分。UI 上默认折叠，原因是过度强调「你不像 TA」容易让用户感到被否定。我们在文案表达上专门避免任何羞辱性措辞。",
+    "audio": "character-judgment/3.mp3"
+  },
+  {
+    "chapter": "character-judgment",
+    "step": 4,
+    "text": "第三个是 uncertain——证据互相冲突，或者 AI judge 输出的置信度本身就低。这种维度不进总分。设计这个状态是为了防止「模棱两可硬塞结论」。宁可少一个维度参与计算，也不要把「不知道」当成「不像」写进结果里。",
+    "audio": "character-judgment/4.mp3"
+  },
+  {
+    "chapter": "character-judgment",
+    "step": 5,
+    "text": "第四个是 insufficient_evidence——用户已经授权了，但是相关数据还不够多，比如这个维度需要至少 2 条证据，目前只有 1 条。这种维度也不进总分。原因和上一条一样：数据不够就如实说「这个维度测不出来」，绝对不能默认判成「不像」。",
+    "audio": "character-judgment/5.mp3"
+  },
+  {
+    "chapter": "character-judgment",
+    "step": 6,
+    "text": "第五个是 not_authorized——用户根本没授权这个维度需要的数据，比如你没开 VLM、没授权聊天进画像。这种维度也不进总分。这条最容易被产品偷懒处理成「没数据就当不符合」，但我们写死了不行——没授权不等于不像，要明确告诉用户「这块没测」。",
+    "audio": "character-judgment/6.mp3"
+  },
+  {
+    "chapter": "fields-similarity-1",
+    "step": 1,
+    "text": "角色相似度上半 10 个字段管的是「这次测定是怎么发生的、结果是什么」——测定 ID、角色体系版本、输入范围、授权快照、证据类型、状态、最相似角色 ID 和名字、相似度分数、命中特点。每次测定都是一次完整的可审计快照。",
+    "audio": "fields-similarity-1/1.mp3"
+  },
+  {
+    "chapter": "fields-similarity-1",
+    "step": 2,
+    "text": "assessment_id 是这次测定的唯一 ID。它的关键不是 UUID 本身，而是「一次测定一条」——每次用户主动触发就生成一个新的，老的不覆盖。这样后面用户回看「我之前那次测出来是什么」我们还能反查到。",
+    "audio": "fields-similarity-1/2.mp3"
+  },
+  {
+    "chapter": "fields-similarity-1",
+    "step": 3,
+    "text": "taxonomy_version 解决一个尴尬场景——半年后角色体系更新了，老的测定结果还能不能讲？我们记下当时用的是哪个版本，比如 public_character_taxonomy_v1.2。版本对得上就讲，对不上就标过期。内部代号、未授权 IP 一律不许出现。",
+    "audio": "fields-similarity-1/3.mp3"
+  },
+  {
+    "chapter": "fields-similarity-1",
+    "step": 4,
+    "text": "input_scope 记的是这次测定实际进了哪些数据源——profile、game_event、chat、chat_derived、vlm 各自有没有用。授权一裁、is_active=false 一过滤，剩下的才进来。后面用户问「你凭什么说我像 TA」，掀开这条就能答。",
+    "audio": "fields-similarity-1/4.mp3"
+  },
+  {
+    "chapter": "fields-similarity-1",
+    "step": 5,
+    "text": "consent_snapshot 是测定那一刻的授权快照——profile_inference、character_similarity 这些当时是不是开的，全冻在这里。这样即使后来用户撤了授权，历史结果还能继续解释；但要新测，必须重新走授权流程。",
+    "audio": "fields-similarity-1/5.mp3"
+  },
+  {
+    "chapter": "fields-similarity-1",
+    "step": 6,
+    "text": "allowed_evidence_types_used 是实际用上的证据类型——playstyle_profile、game_event、highlight_event 之类。它怎么来的？把角色 trait 的配置和本次授权做个交集，剩下的就是这次能用的。只记类型不记原文。",
+    "audio": "fields-similarity-1/6.mp3"
+  },
+  {
+    "chapter": "fields-similarity-1",
+    "step": 7,
+    "text": "assessment_status 是这次测定的结局——completed、insufficient_authorization、insufficient_evidence 三选一。我们故意把「没授权」和「证据不够」拆开，原因是给用户两种不同的补救路径：要么去开授权，要么先多玩几局。",
+    "audio": "fields-similarity-1/7.mp3"
+  },
+  {
+    "chapter": "fields-similarity-1",
+    "step": 8,
+    "text": "matched_character_id 是最相似角色的 ID，比如 mage_mentor。大模型基于授权数据返回，必须来自当前体系内的可展示角色，不许出现内部代号。如果 status 不是 completed，这条直接为 null，不冒充给一个角色。",
+    "audio": "fields-similarity-1/8.mp3"
+  },
+  {
+    "chapter": "fields-similarity-1",
+    "step": 9,
+    "text": "matched_character_name 是给 UI 展示的角色名，比如「星轨导师」，和 ID 配对。这条字段唯一的硬约束就是——只能展示授权可对外的角色名，没拿到 IP 授权的内部命名一个字都不许漏出来。未完成时同样为 null。",
+    "audio": "fields-similarity-1/9.mp3"
+  },
+  {
+    "chapter": "fields-similarity-1",
+    "step": 10,
+    "text": "similarity_score 是加权命中率，0 到 1 的分数。算法是把可判断 traits 各自的 match_score 乘上 weight 加起来。但我们专门写了一行设计原则——这不是人格分数，UI 上甚至可以不展示数字，只用来做内部排序和稳定性兜底。",
+    "audio": "fields-similarity-1/10.mp3"
+  },
+  {
+    "chapter": "fields-similarity-1",
+    "step": 11,
+    "text": "matched_traits 是 UI 主展示的「你像 TA 的地方」。只装 match_status=matched 的那些 trait，每条必须挂 evidence_ids。这是我们最在乎的一件事——所有「你像」的话都得能反查回具体证据，不能是空口大话。",
+    "audio": "fields-similarity-1/11.mp3"
+  },
+  {
+    "chapter": "fields-similarity-2",
+    "step": 1,
+    "text": "角色相似度下半 9 个字段，处理的都是「边界」——和你不像的部分怎么说、没测出来的部分怎么解释、这条结果会不会污染日常陪伴、它的生命周期怎么管。整一节就是一句话——测定要诚实，宁可少说也别瞎说。",
+    "audio": "fields-similarity-2/1.mp3"
+  },
+  {
+    "chapter": "fields-similarity-2",
+    "step": 2,
+    "text": "unmatched_traits 是「证据够了但和你不像」的那些 trait。我们专门留这条而不是直接删，是为了让用户更正——你不认同我们可以改。但 UI 上默认折叠，文案也要求避免羞辱性表达，毕竟「你不像 TA」很容易听着像否定。",
+    "audio": "fields-similarity-2/2.mp3"
+  },
+  {
+    "chapter": "fields-similarity-2",
+    "step": 3,
+    "text": "not_evaluable_traits 是没测出来的 trait，比如未授权、证据不足、不确定。最关键的取舍是——这些不参与总分。我们绝不把「不知道」当成「不符合」打分扣下去，否则刚开始玩的用户会被系统冤枉成「啥都不像」。",
+    "audio": "fields-similarity-2/3.mp3"
+  },
+  {
+    "chapter": "fields-similarity-2",
+    "step": 4,
+    "text": "data_window 写的是这次测定吃了多大一坨数据——from / to 时间段、session_count 多少局。看起来冗余，但用户问「你才看我打了几把就下结论」的时候，我们能掏出这条数据回答，而不是嘴硬说「相信我们」。",
+    "audio": "fields-similarity-2/4.mp3"
+  },
+  {
+    "chapter": "fields-similarity-2",
+    "step": 5,
+    "text": "assessment_at 是测定完成那一刻的时间戳。看起来朴素，但它撑住三件事——做结果时间轴、判断「过没过期」、给下次重测推荐找参考点。和别的时间字段一样，系统直接写入，不让 AI 碰，避免出现「测定时间被悄悄改了」的诡异 bug。",
+    "audio": "fields-similarity-2/5.mp3"
+  },
+  {
+    "chapter": "fields-similarity-2",
+    "step": 6,
+    "text": "user_feedback 是用户对结果的反馈事件——按钮点对了 / 不对，或者直接跟桌宠说「这像」、「这不像」。正向 1、负向 0，同一条结果以最新一次为准。注意它不直接改结果，是作为信号反哺，避免一句吐槽就把整个测定推翻。",
+    "audio": "fields-similarity-2/6.mp3"
+  },
+  {
+    "chapter": "fields-similarity-2",
+    "step": 7,
+    "text": "use_for_companion 是个非常关键的二级开关——默认 false，意思是「测出来归测出来，桌宠日常陪伴照旧」。理由很重——一次测定就把桌宠人设带偏，体验会崩。用户接受结果之后还得单独点这个开关，才会影响陪伴策略。",
+    "audio": "fields-similarity-2/7.mp3"
+  },
+  {
+    "chapter": "fields-similarity-2",
+    "step": 8,
+    "text": "is_active 默认 true，被用户删、被否定、过期、和新证据冲突都翻成 false。一旦 false，这条测定结果不展示、不引用、也不能作为后续推断的参考。和别的对象一样，是「记得它错过」，不是真删。",
+    "audio": "fields-similarity-2/8.mp3"
+  },
+  {
+    "chapter": "fields-similarity-2",
+    "step": 9,
+    "text": "inactive_reason 还是那五个枚举：user_deleted、user_rejected、user_replaced、expired、conflict_with_newer_evidence。这里有两个常见 expired 场景——角色 taxonomy 版本变了、或者用了的数据窗口已经太旧了。",
+    "audio": "fields-similarity-2/9.mp3"
+  },
+  {
+    "chapter": "fields-similarity-2",
+    "step": 10,
+    "text": "inactive_at 是这条测定被翻成不可用的那一刻。审计需要它，重测提示也需要它——比如下次桌宠想说「你上次的测定有点旧了，要不要再来一次」，就是靠这个戳判断的。",
+    "audio": "fields-similarity-2/10.mp3"
+  },
+  {
+    "chapter": "closing",
+    "step": 1,
+    "text": "DRS 讲到这里就讲完了。回过头来想，这份文档的目的其实不是写有多少字段、定多少枚举，而是把「桌宠能用什么数据、不能用什么数据」这件事一次性写死，让所有产研都看到同一张表。把文档读完不重要，重要的是这套数据契约在产品里真的能落地。",
+    "audio": "closing/1.mp3"
+  },
+  {
+    "chapter": "closing",
+    "step": 2,
+    "text": "整份 DRS 其实只在回答一个问题——桌宠到底需要哪些数据。开头第一页就是这句话，绕了一圈讲完所有数据边界、所有循环、所有模块、所有开关、还有所有画像和测定，最后还是回到这一个问题。我们没回避任何细节，但所有细节都收在这一问之下。",
+    "audio": "closing/2.mp3"
+  },
+  {
+    "chapter": "closing",
+    "step": 3,
+    "text": "我们给的答案是一份契约。任何字段、任何模型分析、任何回写动作，都不能绕过三件事——用户授权、删除策略、用户更正。这三道闸是这份文档最硬的部分。AI 不能自己开授权、不能改删除策略、也不能覆盖用户改过的字段。",
+    "audio": "closing/3.mp3"
+  },
+  {
+    "chapter": "closing",
+    "step": 4,
+    "text": "对每条数据，我们都要求同一组动作走得通——能采集进来、能整理成画像、能被桌宠查到引用、能被用户删掉、也能被用户改写。这 5 个动作合在一起，就是这份 DRS 同时承担的两个角色：既是一份数据需求清单，也是一份数据契约。",
+    "audio": "closing/4.mp3"
+  }
+]

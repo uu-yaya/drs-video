@@ -1,0 +1,6 @@
+/* Chapter 03 · boundary-redlines — class prefix .br- */
+
+.br-scene {
+  position: absolute;
+  inset: 0;
+}

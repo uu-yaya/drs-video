@@ -1,0 +1,6 @@
+/* Chapter 07 · profile-structure — class prefix .ps- */
+
+.ps-scene {
+  position: absolute;
+  inset: 0;
+}

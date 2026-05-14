@@ -1,0 +1,204 @@
+/* Chapter 12 · closing — class prefix .cl- */
+
+.cl-scene {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.cl-center {
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.cl-final-scene {
+  justify-content: center;
+  align-items: stretch;
+  padding: var(--stage-pad-y) var(--stage-pad-x);
+}
+
+/* ── bye (step 0) ── */
+.cl-bye {
+  font-size: 168px;
+  color: var(--text);
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.cl-bye-rule {
+  margin-top: 56px;
+  width: 0;
+  border-top: 2px dashed var(--accent);
+  opacity: 0;
+  animation: cl-bye-rule-draw 600ms 500ms cubic-bezier(0.19, 1, 0.22, 1) forwards;
+}
+
+@keyframes cl-bye-rule-draw {
+  from { opacity: 0; width: 0; }
+  to   { opacity: 0.6; width: 320px; }
+}
+
+/* ── question (step 1) ── */
+.cl-q-kicker {
+  font-size: 16px;
+  color: var(--accent);
+  margin-bottom: 48px;
+}
+
+.cl-q {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: center;
+  gap: 16px;
+  font-size: 96px;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  line-height: 1.2;
+  max-width: 1700px;
+}
+
+.cl-q-num {
+  font-size: 220px;
+  color: var(--accent);
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 0.9;
+}
+
+.cl-q-em {
+  color: var(--accent);
+}
+
+/* ── answer (step 2) ── */
+.cl-a-kicker {
+  font-size: 16px;
+  color: var(--accent);
+  margin-bottom: 48px;
+}
+
+.cl-a {
+  margin: 0 0 56px 0;
+  display: flex;
+  align-items: baseline;
+  gap: 32px;
+  font-size: 200px;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  line-height: 1;
+}
+
+.cl-a-em {
+  color: var(--accent);
+}
+
+.cl-a-strap {
+  display: inline-flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 28px;
+  border: 2px dashed var(--accent);
+}
+
+.cl-a-strap-tick {
+  width: 16px;
+  height: 16px;
+  background: var(--accent);
+  box-shadow: 0 0 12px var(--accent-glow);
+}
+
+.cl-a-strap-text {
+  font-size: 32px;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+
+.cl-a-strap-em {
+  color: var(--accent);
+}
+
+/* ── final (step 3) ── */
+.cl-actions {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 24px;
+  margin-bottom: 48px;
+}
+
+.cl-action {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 40px 16px;
+  background: var(--surface-2);
+  border: 2px solid var(--accent);
+  opacity: 0;
+  transform: translateY(16px);
+  animation: cl-action-in 500ms cubic-bezier(0.19, 1, 0.22, 1) forwards;
+}
+
+@keyframes cl-action-in {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.cl-action-en {
+  font-size: 22px;
+  color: var(--accent);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+}
+
+.cl-action-cn {
+  font-size: 80px;
+  color: var(--text);
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.cl-final-rule {
+  width: 100%;
+  border-top: 2px dashed var(--rule);
+  margin-bottom: 48px;
+}
+
+.cl-twin {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 64px;
+  align-items: center;
+}
+
+.cl-twin-side {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.cl-twin-en {
+  font-size: 32px;
+  color: var(--text-mute);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+}
+
+.cl-twin-cn {
+  font-size: 120px;
+  color: var(--text);
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.cl-twin-cn-em {
+  color: var(--accent);
+}
+
+.cl-twin-amp {
+  font-size: 96px;
+  color: var(--text-faint);
+  letter-spacing: 0;
+}
