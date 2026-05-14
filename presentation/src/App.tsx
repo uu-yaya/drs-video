@@ -50,8 +50,7 @@ export default function App() {
   // Build a flat timeline mapping (globalIdx → step duration). audio-durations.json
   // ships from measure-audio.ts and falls back to the char-count estimate for any
   // missing entries (e.g. new chapter added but not yet resynthesized).
-  const { stepDurations, stepStarts, totalDuration } = useMemo(() => {
-    const dur: number[] = [];
+  const { stepStarts, totalDuration } = useMemo(() => {
     const starts: number[] = [];
     let acc = 0;
     const dict = audioDurations as Record<string, Record<string, number>>;
@@ -60,12 +59,11 @@ export default function App() {
       c.narrations.forEach((text, i) => {
         const measured = chDict[String(i + 1)];
         const d = measured && measured > 0 ? measured : estimateStepSeconds(text);
-        dur.push(d);
         starts.push(acc);
         acc += d;
       });
     }
-    return { stepDurations: dur, stepStarts: starts, totalDuration: acc };
+    return { stepStarts: starts, totalDuration: acc };
   }, []);
 
   const [rate, setRate] = useState<number>(loadRate);
