@@ -28,7 +28,10 @@ jobs:
 
       - name: Install dependencies
         working-directory: ./presentation
-        run: npm ci
+        # Use `npm install` instead of `npm ci` because the lock file is
+        # generated on macOS and omits Linux-only optional binaries like
+        # @emnapi/core. `npm install` resolves them at CI time on Linux.
+        run: npm install --no-audit --no-fund
 
       - name: Build
         working-directory: ./presentation
