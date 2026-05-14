@@ -90,9 +90,15 @@ function cardPositionFor(nodeX: number, nodeY: number) {
   /** keep the card clear of the bottom subtitle band (~96px + 32 inset) */
   const bottomReserve = 128;
   /** small breathing room between the node card and the floating detail card */
-  const gap = 28;
-  /** rough estimate of half the branch node width (min-width 180 + padding) */
-  const nodeHalfW = 120;
+  const gap = 40;
+  /**
+   * Half the branch node visual width.
+   * - Base min-width is 180px → halfW 90 + ~20 padding-half = ~110.
+   * - Active branches `transform: scale(1.12)` → +12% → ~123.
+   * - The active glow box-shadow extends a few more pixels visually.
+   * Bumping this to 160 ensures the floating card never bleeds into the node.
+   */
+  const nodeHalfW = 160;
 
   const rightCx = nodeX + nodeHalfW + gap + cardHalfW;
   const leftCx = nodeX - nodeHalfW - gap - cardHalfW;
